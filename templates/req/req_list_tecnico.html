@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+
+    {% if not requerimento %}
+            <h2>NÂO HÀ REQUERIMENTOS</h2>
+    {% else %}
+    <h2>Requerimentos</h2>
+    <form class="navbar-form navbar-left" role="search" method="get" action="{% url 'req_list' %}">
+      <div class="form-group">
+          <label for="criterio">Descrição:</label>
+        <input type="text" id="criterio" name="criterio" value="{{ criterio }}" class="form-control" placeholder="Descrição">
+      </div>
+      <button type="submit" class="btn btn-default">Buscar</button>
+    </form>
+    <table class="table table-hover">
+        <tr>
+            <th>Aluno</th>
+            <th>Tipo</th>
+            <th>Disciplina</th>
+            <th>Data da Solicitação</th>
+            <th>Situação</th>
+        </tr>
+         {% for requerimento in requerimento %}
+            <tr>
+                <td><a href="{% url 'req_detail' requerimento.pk %}">{{ requerimento.aluno.first_name }}</a></td>
+                <td>{{ requerimento.tipo_requerimento }}</td>
+                <td>{{ requerimento.disciplina }}</td>
+                <td>{{ requerimento.data_solicitacao_requerimento }}</td>
+                <td>{{ requerimento.situacao }}</td>
+                <td><a href="{% url 'req_update' requerimento.pk %}" class="btn btn-primary">Analisar</a> </td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% include 'paginacao.html' %}
+    {% endif %}
+{% endblock %}

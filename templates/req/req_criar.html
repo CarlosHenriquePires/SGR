@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+    <h2>Requerimentos</h2>
+    <form method="GET" role="form" action="{% url 'req_new' %}" class="form-group">
+
+        <select name="id_tipo_requerimento">
+            {% for field in tipo_requerimento %}
+                <option value="{{ field.id }}">{{ field.nome }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" class="btn btn-primary" value="Criar">
+    </form>
+{% endblock %}
