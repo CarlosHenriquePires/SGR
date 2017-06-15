@@ -1,4 +1,4 @@
-from appssgr.models import *
+from appsgr.models import *
 
 professores=Group(name="Professores")
 professores.save()

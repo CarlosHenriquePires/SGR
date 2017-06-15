@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from appssgr.models import *
+from appsgr.models import *
 
 class RequerimentoForm(ModelForm):
     class Meta:

@@ -1,9 +1,9 @@
 from django.conf.urls import include,url
-from appssgr.views import *
+from appsgr.views import *
 from django.contrib.auth.views import login,logout
 from django.conf.urls.static import static
 
-from sgr_ifrn2 import settings
+from sgr import settings
 from .api import *
 from tastypie.api import Api
 from django.conf import settings
