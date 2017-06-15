@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class AppssgrConfig(AppConfig):
-    name = 'appssgr'
+class AppsgrConfig(AppConfig):
+    name = 'appsgr'
