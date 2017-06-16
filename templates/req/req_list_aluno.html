@@ -23,6 +23,7 @@
             <th> Professor </th>
             <th> Disciplina </th>
             <th> Situação </th>
+            <th> Comprovante </th>
         </tr>
         {% for requerimento in requerimento %}
             <tr>
@@ -34,9 +35,13 @@
                 <td> {{ requerimento.data_atividade }}</td>
                 <td> {{ requerimento.professor_atividade }}</td>
                 <td> {{ requerimento.disciplina }}</td>
-                 <td> {{ requerimento.situacao }}</td>
+                <td> {{ requerimento.situacao }}</td>
+                <td><a href="{% url 'req_detail_pdf' requerimento.pk %}">Comprovante</a></td>
             </tr>
+
         {% endfor %}
+                <!--<td><button onclick="{% url 'generatepdf' %}">Gerar Comprovante</button></td> -->
+
     </table>
     {% include 'paginacao.html' %}
     {% endif %}

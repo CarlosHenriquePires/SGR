@@ -54,6 +54,8 @@ urlpatterns=[
     url(r'^req/detail/(?P<pk>\d+)$', req_detail, name='req_detail'),
     #url(r'^req/delete/(P<pk>\d+)$',req_delete,name='req_delete'),
     url(r'^api/',include(api.urls),name='api'),
+    url(r'^pdf/$',GeneratePDF.as_view(),name='generatepdf'),
+    url(r'^req/detail_pdf/(?P<pk>\d+)$', req_detail_pdf, name='req_detail_pdf'),
 
 
 ]

@@ -1,10 +1,72 @@
 from django.contrib.auth.decorators import login_required,permission_required
 from django.shortcuts import render,redirect
 from django.core.paginator import Paginator,PageNotAnInteger,EmptyPage
+from django.template.loader import get_template
+
 from appsgr.forms import *
 from django.forms import modelform_factory
 
-# Create your views here..
+from django.http import HttpResponse
+from django.views.generic import View
+
+from appsgr.utils import render_to_pdf
+
+### converter para PDF #####
+def req_detail_pdf(request, pk):
+    pessoa_logada = Pessoa.objects.get(username=request.user.username)
+    usuarios = []
+    request.session[0]=pk
+    try:
+        aluno = Aluno.objects.get(username=pessoa_logada.username)
+    except Aluno.DoesNotExist:
+        aluno = None
+    try:
+        professor = Professor.objects.get(pessoa_id=pessoa_logada.id)
+    except Professor.DoesNotExist:
+        professor = None
+    try:
+        tecnico = Tecnico_Administrativo.objects.get(pessoa_id=pessoa_logada.id)
+    except Tecnico_Administrativo.DoesNotExist:
+        tecnico = None
+
+    requerimento=Requerimento.objects.get(id=pk)
+    form=RequerimentoForm(request.POST,instance=requerimento)
+    dados = {'form':form,'usuarios':usuarios,'requerimento':requerimento}
+
+    def get(self, request, *args, **kwargs):
+        template = get_template('req/pdf.html')
+        # context = req_detail_pdf
+        # html = template.render(dados)
+        pdf = render_to_pdf('req/pdf.html',dados)
+        if pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            filename = "comprovante%s.pdf" % ("12341231")
+            content = "inline; filename='%s'" % (filename)
+            download = request.GET.get("download")
+            if download:
+                content = "attachment; filename='%s'" % (filename)
+            response['Content-Disposition'] = content
+            return response
+        return HttpResponse("Not found")
+    return render(request, 'req/pdf.html', dados)
+
+class GeneratePDF(View):
+   def get(self, request,*args, **kwargs):
+        template = get_template('req/pdf.html')
+        #context = req_detail_pdf
+        #html = template.render(dados)
+        pdf = render_to_pdf('req/pdf.html')
+        if pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            filename = "comprovante%s.pdf" % ("12341231")
+            content = "inline; filename='%s'" % (filename)
+            download = request.GET.get("download")
+            if download:
+                content = "attachment; filename='%s'" % (filename)
+            response['Content-Disposition'] = content
+            return response
+        return HttpResponse("Not found")
+#######
 
 @login_required(login_url='login')
 def home(request):

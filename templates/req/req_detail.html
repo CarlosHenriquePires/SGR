@@ -1,17 +1,18 @@
 {% extends 'base.html' %}
 {% block conteudo %}
-
+    <h4 align="center"> REQUERIMENTO SOLICITADO </h4>
     <div id="conteudo">
-        <ul class="list-group">
-            <li class="list-group-item">Aluno: {{ requerimento.aluno }}</li>
-            <li class="list-group-item">Curso: {{ requerimento.aluno.curso }}</li>
-            <li class="list-group-item">Tipo de Requerimento: {{ requerimento.tipo_requerimento }}</li>
-            <li class="list-group-item">Disciplina: {{ requerimento.disciplina}}</li>
-            <li class="list-group-item">Data da Atividade: {{ requerimento.data_atividade }}</li>
-            <li class="list-group-item">Professor: {{ requerimento.professor_atividade }}</li>
-            <li class="list-group-item">Documento Apresentado: {{ requerimento.documentos_files.url }}</li>
-            <li class="list-group-item">Arquivo: {{ requerimento.documentos_files }}</li>
-        </ul>
+        <p align="justify">
+            <strong >Aluno: </strong>{{ requerimento.aluno }} <br />
+            <strong>Curso:</strong> {{ requerimento.aluno.curso }} <br />
+            <strong>Tipo de Requerimento: </strong> {{ requerimento.tipo_requerimento }} <br />
+            <strong>Disciplina: </strong> {{ requerimento.disciplina}} <br />
+            <strong>Data da Atividade Perdida: </strong> {{ requerimento.data_atividade }} <br />
+            <strong>Data da Solicitação: </strong> {{ requerimento.data_solicitacao_requerimento }} <br />
+            <strong>Professor: </strong> {{ requerimento.professor_atividade }} <br />
+        <p/>
+            <!-- <li class="list-group-item">Documento Apresentado: {{ requerimento.documentos_files.url }}</li>
+            <li class="list-group-item">Arquivo: {{ requerimento.documentos_files }}</li> -->
     </div>
     <button onclick="gerarPDF()" id="gerarPDF">Gerar Comprovante</button>
 {% endblock %}
