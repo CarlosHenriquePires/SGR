@@ -32,22 +32,6 @@
       <script src="js/respond.min.js"></script>
       <script src="js/lte-ie7.js"></script>
       <script src="http://cdnjs.cloudflare.com/ajax/libs/jspdf/0.9.0rc1/jspdf.min.js"></script>
-      <script>
-            var doc = new jsPDF();
-            var specialElementHandlers = {
-                '#editor': function (element, renderer) {
-                    return true;
-                }
-            };
-            function gerarPDF() {
-                doc.fromHTML($('#conteudo').html(), 15, 15, {
-                    'width': 170,
-                        'elementHandlers': specialElementHandlers
-                });
-                doc.save('exemplo-pdf.pdf');
-            }
-      </script>
-
   </head>
 
   <body>
