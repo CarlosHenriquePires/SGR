@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'appsgr',
     'widget_tweaks',
     'bootstrapform',
-    'tastypie'
+    'tastypie',
 ]
 
 MIDDLEWARE = [

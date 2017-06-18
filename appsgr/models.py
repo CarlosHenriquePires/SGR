@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
-
+from datetime import datetime
 
 # Modelo Pessoa
 class Pessoa(User):
@@ -91,7 +91,7 @@ def aluno_directory_path(instance, filename):
 
 class Requerimento(models.Model):
     aluno = models.ForeignKey(Aluno, on_delete=models.PROTECT, related_name="Aluno", null=False)
-    data_solicitacao_requerimento = models.DateTimeField("Data da solicitação", null=True, blank=True, auto_now_add=True, editable=False)
+    data_solicitacao_requerimento = models.DateField("Data da solicitação", null=True, blank=True, auto_now_add=True, editable=False)
     tipo_requerimento = models.ForeignKey(TipoRequerimento, on_delete=models.PROTECT, verbose_name="Tipo de Requerimento", null=False)
     disciplina = models.ForeignKey(Disciplina, on_delete=models.PROTECT, related_name="Disciplina", null=True, blank=True)
     observacoes = models.TextField("Observações", blank=True, null=True)
@@ -103,6 +103,7 @@ class Requerimento(models.Model):
     documentos_files = models.FileField(upload_to=aluno_directory_path,default=None, null=True)
     encaminhado_para = models.ForeignKey(Pessoa, on_delete=models.PROTECT, related_name="Avaliador", null=True, blank=True)
     situacao = models.ForeignKey(Situacao, max_length=50, blank=True, null=True,default=1)
+    data_atual = datetime.now().date()
 
     class Meta:
         permissions = (

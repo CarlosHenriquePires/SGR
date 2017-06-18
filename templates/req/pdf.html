@@ -1,29 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Comprovante de Requerimento</title>
+<style type="text/css">
+    p,h3  {
+            text-align: justify;
+            text-indent: 50px;
+            font-weight: normal;
+            font-size: large;
+            margin-right: 100px;
+            margin-left: 100px;
+            margin-top: 80px;
+        }
 
-</head>
-<body>
-    <center><img  alt="" align="middle" src="/static/images/ifrn.jpg"  height="150" width="400"></center>
+    .data {
+            text-align: right;
 
+            }
+    h2 {
+            text-align: center;
+            font-size: x-large;
+        }
+    img{
+            display: block;
+            margin: auto;
+            width: 30%;
+            height: 30%;
+            margin-bottom: 80px;
 
-        <h2 align="middle"> REQUERIMENTO</h2>
-     <div id="conteudo">
-         <p align="middle">
-         Declaramos que o aluno {{ requerimento.aluno }} do curso {{ requerimento.aluno.curso }}, de matrícula {{ pessoa.aluno.id }}
-         socicitou requerimento para {{ requerimento.tipo_requerimento }} da disciplina {{ requerimento.disciplina}} do ministrada por  {{ requerimento.professor_atividade }}.
-         </p>
+        }
 
-            <!--<strong>Curso:</strong> {{ requerimento.aluno.curso }} <br />
-            <strong>Tipo de Requerimento: </strong> {{ requerimento.tipo_requerimento }} <br />
-            <strong>Disciplina: </strong> {{ requerimento.disciplina}} <br />
-            <strong>Data da Atividade Perdida: </strong> {{ requerimento.data_atividade }} <br />
-            <strong>Data da Solicitação: </strong> {{ requerimento.data_solicitacao_requerimento }} <br />
-            <strong>Professor: </strong> {{ requerimento.professor_atividade }} <br /> <p/>
-            <li class="list-group-item">Documento Apresentado: {{ requerimento.documentos_files.url }}</li>
-            <li class="list-group-item">Arquivo: {{ requerimento.documentos_files }}</li> -->
-    </div>
-</body>
+</style>
+    <head>
+        <meta charset="UTF-8">
+        <title>Comprovante de Requerimento</title>
+
+    </head>
+    <body>
+    <center><img class="logo" src="C:\Users\CH\PycharmProjects\sgr\static\images\ifrn.jpg" height="100" width="300"></center>
+        <h2> REQUERIMENTO</h2>
+        <p><h3>
+            Declaramos que o aluno <strong>{{ requerimento.aluno }}</strong> do curso <strong class="dados">
+            {{ requerimento.aluno.curso }}</strong>, de matrícula <strong>{{ requerimento.aluno.username}}, </strong>
+            solicitou no dia {{ requerimento.data_solicitacao_requerimento}}
+            um requerimento para <strong>{{ requerimento.tipo_requerimento }}</strong>
+            da disciplina <strong>{{ requerimento.disciplina}}</strong>
+            ministrada pelo professor <strong>{{ requerimento.professor_atividade }}</strong>.
+        </h3></p>
+
+        <h3 class="data">Parnamirim(RN), {{ requerimento.data_atual}}.</h3>
+
+    </body>
 </html>
