@@ -2,7 +2,7 @@
 {% block conteudo %}
 
     {% if not requerimento %}
-            <h2>NÂO HÀ REQUERIMENTOS</h2>
+            <h2 align="center">NÃO HÁ REQUERIMENTOS</h2>
     {% else %}
     <h2>Requerimentos</h2>
     <form class="navbar-form navbar-left" role="search" method="get" action="{% url 'req_list_deferidos' %}">
@@ -27,7 +27,6 @@
                 <td> {{ requerimento.disciplina }} </td>
                 <td>{{ requerimento.data_solicitacao_requerimento }}</td>
                 <td>{{ requerimento.situacao }}</td>
-                <td><a href="{% url 'req_update' requerimento.pk %}" class="btn btn-primary">Deferir/Indeferir</a> </td>
             </tr>
         {% endfor %}
     </table>

@@ -2,7 +2,7 @@
 {% block conteudo %}
 
     {% if not requerimento %}
-            <h2>NÂO HÀ REQUERIMENTOS</h2>
+            <h2 align="center">NÃO HÁ REQUERIMENTOS</h2>
     {% else %}
     <h2>Requerimentos</h2>
     <form class="navbar-form navbar-left" role="search" method="get" action="{% url 'req_list_indeferidos' %}">
@@ -17,6 +17,7 @@
             <th>Aluno</th>
             <th>Tipo</th>
             <th>Disciplina</th>
+            <th>Professor da Disciplina</th>
             <th>Data da Solicitação</th>
             <th>Situação</th>
         </tr>
@@ -25,6 +26,7 @@
                 <td><a href="{% url 'req_detail' requerimento.pk %}">{{ requerimento.aluno.first_name }}</a></td>
                 <td>{{ requerimento.tipo_requerimento }}</td>
                 <td> {{ requerimento.disciplina }} </td>
+                <td> {{ requerimento.professor_atividade }}</td>
                 <td>{{ requerimento.data_solicitacao_requerimento }}</td>
                 <td>{{ requerimento.situacao }}</td>
             </tr>

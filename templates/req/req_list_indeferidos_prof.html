@@ -2,7 +2,7 @@
 {% block conteudo %}
 
     {% if not requerimento %}
-            <h2>NÂO HÀ REQUERIMENTOS</h2>
+            <h2 align="center">NÃO HÁ REQUERIMENTOS</h2>
     {% else %}
     <h2>Requerimentos</h2>
     <form class="navbar-form navbar-left" role="search" method="get" action="{% url 'req_list_indeferidos' %}">
@@ -18,6 +18,7 @@
             <th>Tipo</th>
             <th>Disciplina</th>
             <th>Data da Solicitação</th>
+            <th>Observação</th>
             <th>Situação</th>
         </tr>
         {% for requerimento in requerimento %}
@@ -26,6 +27,7 @@
                 <td>{{ requerimento.tipo_requerimento }}</td>
                 <td> {{ requerimento.disciplina }} </td>
                 <td>{{ requerimento.data_solicitacao_requerimento }}</td>
+                <td> {{ requerimento.observacoes }} </td>
                 <td>{{ requerimento.situacao }}</td>
             </tr>
         {% endfor %}

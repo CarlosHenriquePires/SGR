@@ -2,7 +2,7 @@
 {% block conteudo %}
 
     {% if not requerimento %}
-            <h2>NÂO HÀ REQUERIMENTOS</h2>
+            <h2 align="center">NÃO HÁ REQUERIMENTOS</h2>
     {% else %}
     <h2>Requerimentos</h2>
     <form class="navbar-form navbar-left" role="search" method="get" action="{% url 'req_list' %}">
@@ -19,6 +19,7 @@
             <th>Disciplina</th>
             <th>Data da Solicitação</th>
             <th>Situação</th>
+            <th>Deferir/Indeferir</th>
         </tr>
         {% for requerimento in requerimento %}
             <tr>

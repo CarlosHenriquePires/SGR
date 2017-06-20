@@ -2,6 +2,8 @@ from appsgr.models import *
 
 professores=Group(name="Professores")
 professores.save()
+coordenadores=Group(name="Coordenadores")
+coordenadores.save()
 alunos=Group(name="Alunos")
 alunos.save()
 tecadm=Group(name="Técnico Administrativo")
@@ -26,19 +28,17 @@ pes3.set_password('123456')
 pes3.save()
 professores.user_set.add(pes3)
 
+pes5=Pessoa(is_staff=True,first_name='Bruno', last_name='Gomes', cpf='33344455567',email='bruno@gmail.com',
+            data_nascimento="1970-05-15", telefone='84998212913' ,username='20122148000009')
+pes5.set_password('123456')
+pes5.save()
+professores.user_set.add(pes5)
+coordenadores.user_set.add(pes5)
 
-pes4=Pessoa(first_name='Eduardo', last_name="Chavez", cpf='55566633301',email='eduardo@gmail.com',data_nascimento="1989-05-15",username='20122148000004',  telefone='84955196660')
+pes4=Tecnico_Administrativo(first_name='Eduardo', last_name="Chavez", cpf='55566633301',email='eduardo@gmail.com',data_nascimento="1989-05-15",username='20122148000004',  telefone='84955196660')
 pes4.set_password('123456')
 pes4.save()
 tecadm.user_set.add(pes4)
-
-# Criando os Professores
-prof1 = Professor(pessoa=pes1)
-prof1.save()
-prof2 = Professor(pessoa=pes2)
-prof2.save()
-prof3 = Professor(pessoa=pes3)
-prof3.save()
 
 # Criando as Disciplinas
 web1 = Disciplina(codigo="prowb1", nome="Programação Web I", carga_horaria=60, periodo=2)
@@ -77,10 +77,9 @@ alu4.set_password('123456')
 alu4.save()
 alunos.user_set.add(alu4)
 
-# Criando os Tecnico Administrativo
-tecadm1=Tecnico_Administrativo(pessoa=pes4)
-tecadm1.save()
-
+# Alunos se matriculando nas Disciplinas
+aludisc = AlunoDisciplina(aluno=alu1,disciplina=web1,matriculado=True)
+aludisc.save()
 
 # Tipo Requerimento
 tipo1 = TipoRequerimento(nome="Reposição de Atividades")
@@ -97,17 +96,3 @@ sit2 = Situacao(tipo="Requerimento Deferido")
 sit2.save()
 sit3 = Situacao(tipo="Requerimento Indeferido")
 sit3.save()
-
-
-
-
-# Criando Requerimento
-#req1 = Requerimento(aluno=alu1,tipo_requerimento=tipo1,disciplina=web1,observacoes="Teste",
-#                    justificava="Consulta Médica",data_atividade="2017-01-10",tipo_atividade="Prova",professor_atividade=prof1)
-#req1.save()
-#req1.documentos_apresentados.add(doc1)
-
-#req2 = Requerimento(aluno=alu2,tipo_requerimento=tipo1,disciplina=web1,observacoes="Teste",
-#                    justificava="Consulta Médica",data_atividade="2017-01-02",tipo_atividade="Prova",professor_atividade=prof1)
-#req2.save()
-#req2.documentos_apresentados.add(doc1)

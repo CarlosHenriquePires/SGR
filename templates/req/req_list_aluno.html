@@ -2,7 +2,7 @@
 {% block conteudo %}
 
     {% if not requerimento %}
-            <h2>NÂO HÀ REQUERIMENTOS</h2>
+            <h2 align="center">NÃO HÁ REQUERIMENTOS</h2>
     {% else %}
     <h2>Requerimentos</h2>
     <form class="navbar-form navbar-left" role="search" method="get" action="{% url 'req_list' %}">
@@ -17,11 +17,10 @@
             <th>Nº</th>
             <th>Tipo</th>
             <th>Data da Solicitação</th>
-            <th> Justificativa </th>
             <th> Tipo Atividade </th>
             <th> Data da Atividade</th>
-            <th> Professor </th>
             <th> Disciplina </th>
+            <th> Professor Disciplina </th>
             <th> Situação </th>
             <th> Comprovante </th>
         </tr>
@@ -30,11 +29,10 @@
                 <td> {{ requerimento.id }}</td>
                 <td><a href="{% url 'req_detail' requerimento.pk %}">{{ requerimento.tipo_requerimento }}</a></td>
                 <td>{{ requerimento.data_solicitacao_requerimento }}</td>
-                <td> {{ requerimento.justificativa }}</td>
                 <td> {{ requerimento.tipo_atividade }} </td>
                 <td> {{ requerimento.data_atividade }}</td>
-                <td> {{ requerimento.professor_atividade }}</td>
                 <td> {{ requerimento.disciplina }}</td>
+                <td> {{ requerimento.professor_atividade }}</td>
                 <td> {{ requerimento.situacao }}</td>
                 <td><a href="{% url 'req_detail_pdf' requerimento.pk %}">Comprovante</a></td>
             </tr>

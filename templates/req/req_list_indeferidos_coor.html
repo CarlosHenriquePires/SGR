@@ -14,25 +14,19 @@
     </form>
     <table class="table table-hover">
         <tr>
-            <th>Nº</th>
+            <th>Aluno</th>
             <th>Tipo</th>
+            <th>Disciplina</th>
             <th>Data da Solicitação</th>
-            <th> Tipo Atividade </th>
-            <th> Data da Atividade</th>
-            <th> Disciplina </th>
-            <th> Professor da Disciplina </th>
-            <th> Situação </th>
+            <th>Situação</th>
         </tr>
         {% for requerimento in requerimento %}
             <tr>
-                <td> {{ requerimento.id }}</td>
-                <td><a href="{% url 'req_detail' requerimento.pk %}">{{ requerimento.tipo_requerimento }}</a></td>
+                <td><a href="{% url 'req_detail' requerimento.pk %}">{{ requerimento.aluno.first_name }}</a></td>
+                <td>{{ requerimento.tipo_requerimento }}</td>
+                <td> {{ requerimento.disciplina }} </td>
                 <td>{{ requerimento.data_solicitacao_requerimento }}</td>
-                <td> {{ requerimento.tipo_atividade }} </td>
-                <td> {{ requerimento.data_atividade }}</td>
-                <td> {{ requerimento.disciplina }}</td>
-                <td> {{ requerimento.professor_atividade }}</td>
-                 <td> {{ requerimento.situacao }}</td>
+                <td>{{ requerimento.situacao }}</td>
             </tr>
         {% endfor %}
     </table>

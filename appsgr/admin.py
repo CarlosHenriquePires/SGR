@@ -12,4 +12,5 @@ admin.site.register(Requerimento)
 admin.site.register(TipoRequerimento)
 admin.site.register(Documento)
 admin.site.register(Situacao)
+admin.site.register(Coordenador)
 

@@ -11,20 +11,23 @@ class Pessoa(User):
     def __str__(self):
         return self.pessoa.first_name
 
-
 # Modelo Professor
-class Professor(models.Model):
-    pessoa = models.OneToOneField(Pessoa, on_delete=models.PROTECT, verbose_name="Pessoa", null=False, primary_key=True)
+class Professor(Pessoa):
 
     def __str__(self):
-        return self.pessoa.first_name
+        return self.pessoa.first_name + " " + self.pessoa.last_name
+
+# Modelo Coordenador
+class Coordenador(Pessoa):
+
+    def __str__(self):
+            return self.pessoa.first_name +" "+ self.pessoa.last_name
 
 # Modelo Tecnico Administrativo
-class Tecnico_Administrativo(models.Model):
-    pessoa = models.OneToOneField(Pessoa, on_delete=models.PROTECT, verbose_name="Pessoa", null=False,primary_key=True)
+class Tecnico_Administrativo(Pessoa):
 
     def __str__(self):
-        return self.pessoa.first_name
+        return self.pessoa.first_name +" "+ self.pessoa.last_name
 
 # Modelo Curso
 class Curso(models.Model):
@@ -36,7 +39,6 @@ class Curso(models.Model):
 
 # Modelo Aluno
 class Aluno(Pessoa):
-    #pessoa = models.OneToOneField(Pessoa, on_delete=models.PROTECT, verbose_name="Pessoa", null=False, primary_key=True)
     curso = models.ForeignKey(Curso, on_delete=models.PROTECT, verbose_name="Curso", null=False, blank=False)
 
     def __str__(self):
@@ -60,6 +62,9 @@ class AlunoDisciplina(models.Model):
     aluno = models.ForeignKey(Aluno, on_delete=models.PROTECT)
     disciplina = models.ForeignKey(Disciplina, on_delete=models.PROTECT)
     matriculado = models.BooleanField("matriculado", blank=False, null=False)
+
+    def __str__(self):
+        return self.disciplina.nome
 
 # Modelo TipoRequerimento
 class TipoRequerimento(models.Model):
@@ -93,7 +98,7 @@ class Requerimento(models.Model):
     aluno = models.ForeignKey(Aluno, on_delete=models.PROTECT, related_name="Aluno", null=False)
     data_solicitacao_requerimento = models.DateField("Data da solicitação", null=True, blank=True, auto_now_add=True, editable=False)
     tipo_requerimento = models.ForeignKey(TipoRequerimento, on_delete=models.PROTECT, verbose_name="Tipo de Requerimento", null=False)
-    disciplina = models.ForeignKey(Disciplina, on_delete=models.PROTECT, related_name="Disciplina", null=True, blank=True)
+    disciplina = models.ForeignKey(AlunoDisciplina, on_delete=models.PROTECT, related_name="Disciplina", null=True, blank=True)
     observacoes = models.TextField("Observações", blank=True, null=True)
     justificativa = models.TextField("Justificativa", blank=True, null=True)
     data_atividade = models.DateField("Data da atividade", null=True, blank=True)
@@ -101,7 +106,7 @@ class Requerimento(models.Model):
     professor_atividade = models.ForeignKey(Professor, on_delete=models.PROTECT, related_name="Professor_Atividade", null=True, blank=True)
     documentos_apresentados = models.ManyToManyField(Documento, blank=True)
     documentos_files = models.FileField(upload_to=aluno_directory_path,default=None, null=True)
-    encaminhado_para = models.ForeignKey(Pessoa, on_delete=models.PROTECT, related_name="Avaliador", null=True, blank=True)
+    encaminhado_para = models.ForeignKey(Coordenador, on_delete=models.PROTECT, related_name="Avaliador", null=True, blank=True)
     situacao = models.ForeignKey(Situacao, max_length=50, blank=True, null=True,default=1)
     data_atual = datetime.now().date()
 
