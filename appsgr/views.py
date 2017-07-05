@@ -9,6 +9,7 @@ from django.forms import modelform_factory
 from django.http import HttpResponse
 
 @login_required(login_url='login')
+@permission_required('appsgr.detail_requerimento',login_url='erro_permissao')
 def req_detail_pdf(request, pk):
     pessoa_logada = Pessoa.objects.get(username=request.user.username)
     usuarios = []
@@ -63,7 +64,7 @@ def req_new(request):
             requerimento.tipo_requerimento=TipoRequerimento.objects.get(id=id_tipo_requerimento)
             requerimento.aluno = Aluno.objects.get(username=request.user.username)
             requerimento.save()
-            return redirect('req_list')
+            return redirect('req_list_avaliacao')
     else:
         form=RequerimentoFormNovo()
     dados={'form':form}
@@ -72,107 +73,20 @@ def req_new(request):
 @login_required(login_url='login')
 @permission_required('appsgr.add_requerimento',login_url='erro_permissao')
 def req_list(request):
-    criterio=request.GET.get('criterio')
     pessoa_logada = Pessoa.objects.get(username=request.user.username)
     tipo_requerimento=TipoRequerimento.objects.all().order_by('nome')
-    requerimentos_professor = []
 
     #Instanciando objetos
     try:
         aluno = Aluno.objects.get(username=pessoa_logada.username)
     except Aluno.DoesNotExist:
         aluno = None
-    try:
-        coordenador = Coordenador.objects.get(username=pessoa_logada.username)
-    except Coordenador.DoesNotExist:
-        coordenador = None
-    try:
-        professor = Professor.objects.get(username=pessoa_logada.username)
-    except Professor.DoesNotExist:
-        professor = None
-
-    try:
-        tecnico = Tecnico_Administrativo.objects.get(id=pessoa_logada.id)
-    except Tecnico_Administrativo.DoesNotExist:
-        tecnico = None
 
     #ALUNO
     if(aluno != None):
-        if (criterio):
-            requerimento=Requerimento.objects.filter(situacao=1,tipo_requerimento__nome__contains=criterio, aluno=aluno).order_by('tipo_requerimento','-data_solicitacao_requerimento')
-        else:
-            requerimento=Requerimento.objects.filter(situacao=1,aluno_id=aluno).order_by('tipo_requerimento','-data_solicitacao_requerimento') #| Requerimento.objects.filter(tipo_requerimento_id=2).order_by('tipo_requerimento','-data_solicitacao_requerimento')
-            criterio=""
-        #Cria o mecanimos de paginação
-        paginator=Paginator(requerimento,10)
-        page=request.GET.get('page')
-        try:
-            requerimento=paginator.page(page)
-        except PageNotAnInteger:
-            requerimento=paginator.page(1)
-        except EmptyPage:
-            requerimento=paginator.page(paginator.num_pages)
-        dados={'requerimento':requerimento,'criterio':criterio,'paginator':paginator,'page_obj':requerimento, "tipo_requerimento":tipo_requerimento}
-        return render(request, 'req/req_list_aluno.html', dados)
+        dados={"tipo_requerimento":tipo_requerimento}
+        return render(request, 'req/req_criar.html', dados)
 
-    # COORDENADOR
-    elif(coordenador != None):
-        if (criterio):
-            requerimento=Requerimento.objects.filter(encaminhado_para=pessoa_logada,professor_atividade=pessoa_logada,situacao=1,tipo_requerimento__nome__contains=criterio).order_by('tipo_requerimento','data_solicitacao_requerimento')
-        else:
-            requerimento=Requerimento.objects.all().filter(encaminhado_para=pessoa_logada,professor_atividade=pessoa_logada,situacao=1).order_by('data_solicitacao_requerimento','aluno__first_name')
-            criterio=""
-        #Cria o mecanimos de paginação
-        paginator=Paginator(requerimento,10)
-        page=request.GET.get('page')
-        try:
-            requerimento=paginator.page(page)
-        except PageNotAnInteger:
-            requerimento=paginator.page(1)
-        except EmptyPage:
-            requerimento=paginator.page(paginator.num_pages)
-        dados={'requerimento':requerimento,'criterio':criterio,'paginator':paginator,'page_obj':requerimento, "tipo_requerimento":tipo_requerimento, 'requerimentos_professor':requerimentos_professor}
-
-        return render(request, 'req/req_list_coor.html', dados)
-
-    # PROFESSOR
-    elif(professor != None):
-        if (criterio):
-            requerimento=Requerimento.objects.filter(professor_atividade=pessoa_logada,situacao=1,tipo_requerimento__nome__contains=criterio).order_by('data_solicitacao_requerimento','aluno__first_name')
-        else:
-            requerimento=Requerimento.objects.all().filter(professor_atividade=pessoa_logada,situacao=1).order_by('tipo_requerimento','data_solicitacao_requerimento')
-            criterio=""
-        #Cria o mecanimos de paginação
-        paginator=Paginator(requerimento,10)
-        page=request.GET.get('page')
-        try:
-            requerimento=paginator.page(page)
-        except PageNotAnInteger:
-            requerimento=paginator.page(1)
-        except EmptyPage:
-            requerimento=paginator.page(paginator.num_pages)
-        dados={'requerimento':requerimento,'criterio':criterio,'paginator':paginator,'page_obj':requerimento, "tipo_requerimento":tipo_requerimento, 'requerimentos_professor':requerimentos_professor}
-        return render(request, 'req/req_list_prof.html', dados)
-
-    # TECNICO ADMINISTRATIVO
-    elif (tecnico != None):
-        if (criterio):
-            requerimento = Requerimento.objects.filter(encaminhado_para=None, situacao=1,descricao__contains=criterio).order_by('data_solicitacao_requerimento','aluno__first_name')
-        else:
-            requerimento = Requerimento.objects.filter(encaminhado_para=None, situacao=1).order_by('data_solicitacao_requerimento','aluno__first_name')
-            criterio = ""
-        # Cria o mecanimos de paginação
-        paginator = Paginator(requerimento, 10)
-        page = request.GET.get('page')
-        try:
-            requerimento = paginator.page(page)
-        except PageNotAnInteger:
-            requerimento = paginator.page(1)
-        except EmptyPage:
-            requerimento = paginator.page(paginator.num_pages)
-        dados = {'requerimento': requerimento, 'criterio': criterio, 'paginator': paginator, 'page_obj': requerimento,
-                 "tipo_requerimento": tipo_requerimento, 'requerimentos_professor': requerimentos_professor}
-        return render(request, 'req/req_list_tecnico.html', dados)
 
 @login_required(login_url='login')
 @permission_required('appsgr.view_requerimento',login_url='erro_permissao')
@@ -208,34 +122,51 @@ def req_list_avaliacao(request):
 
     # ALUNO
     if (aluno != None):
-        if (criterio):
-            requerimento = Requerimento.objects.filter(situacao=1, tipo_requerimento__nome__contains=criterio,
-                                                       aluno=aluno).order_by('data_solicitacao_requerimento','aluno__first_name')
-        else:
-            requerimento = Requerimento.objects.filter(situacao=1, aluno_id=aluno).order_by('data_solicitacao_requerimento','aluno__first_name')  # | Requerimento.objects.filter(tipo_requerimento_id=2).order_by('tipo_requerimento','-data_solicitacao_requerimento')
-            criterio = ""
-        # Cria o mecanimos de paginação
-        paginator = Paginator(requerimento, 10)
-        page = request.GET.get('page')
-        try:
-            requerimento = paginator.page(page)
-        except PageNotAnInteger:
-            requerimento = paginator.page(1)
-        except EmptyPage:
-            requerimento = paginator.page(paginator.num_pages)
-        dados = {'requerimento': requerimento, 'criterio': criterio, 'paginator': paginator, 'page_obj': requerimento,
-                 "tipo_requerimento": tipo_requerimento}
-        return render(request, 'req/req_list_aluno.html', dados)
+            if (criterio_prof):
+                requerimento = Requerimento.objects.filter(situacao=1, aluno=aluno,
+                                                           professor_atividade__first_name__contains=criterio_prof,
+                                                           ).order_by('data_solicitacao_requerimento')
+            if (criterio_disciplina):
+                requerimento = Requerimento.objects.filter(aluno=aluno, situacao=1,
+                                                           disciplina__disciplina__nome__contains=criterio_disciplina).order_by(
+                    'data_solicitacao_requerimento')
+
+            if (criterio_prof or criterio_disciplina):
+                requerimento = Requerimento.objects.filter(aluno=aluno, situacao=1,
+                                                           professor_atividade__first_name__contains=criterio_prof
+                                                           ,
+                                                           disciplina__disciplina__nome__contains=criterio_disciplina).order_by \
+                    ('data_solicitacao_requerimento')
+
+
+            else:
+                requerimento = Requerimento.objects.all().filter(aluno=aluno, situacao=1).order_by(
+                    'data_solicitacao_requerimento')
+                criterio = ""
+            # Cria o mecanimos de paginação
+            paginator = Paginator(requerimento, 10)
+            page = request.GET.get('page')
+            try:
+                requerimento = paginator.page(page)
+            except PageNotAnInteger:
+                requerimento = paginator.page(1)
+            except EmptyPage:
+                requerimento = paginator.page(paginator.num_pages)
+            dados = {'requerimento': requerimento, 'criterio': criterio, 'paginator': paginator,
+                     'page_obj': requerimento,
+                     "tipo_requerimento": tipo_requerimento, "professores": professores, "disciplinas": disciplinas,
+                     'requerimentos_professor': requerimentos_professor}
+            return render(request, 'req/req_list_aluno.html', dados)
 
     # COORDENADOR
     elif (coordenador != None):
         if (criterio):
-            requerimento = Requerimento.objects.filter(encaminhado_para=pessoa_logada, situacao=1,
+            requerimento = Requerimento.objects.filter( situacao=1,encaminhado_para=pessoa_logada,
                                                        aluno__first_name__contains=criterio).order_by(
                 'tipo_requerimento', 'data_solicitacao_requerimento')
 
         if (criterio_prof):
-            requerimento = Requerimento.objects.filter(situacao=1, professor_atividade__first_name__contains=criterio_prof,
+            requerimento = Requerimento.objects.filter(situacao=1,encaminhado_para=pessoa_logada, professor_atividade__first_name__contains=criterio_prof,
                                                        ).order_by('data_solicitacao_requerimento','aluno__first_name')
         if (criterio_disciplina):
             requerimento = Requerimento.objects.filter(encaminhado_para=pessoa_logada, situacao=1,
@@ -243,7 +174,7 @@ def req_list_avaliacao(request):
                 'data_solicitacao_requerimento','aluno__first_name')
 
         if (criterio_prof or criterio or criterio_disciplina ):
-            requerimento = Requerimento.objects.filter(situacao=1, professor_atividade__first_name__contains=criterio_prof
+            requerimento = Requerimento.objects.filter(encaminhado_para=pessoa_logada,situacao=1, professor_atividade__first_name__contains=criterio_prof
             ,aluno__first_name__contains=criterio,disciplina__disciplina__nome__contains=criterio_disciplina).order_by\
                 ('data_solicitacao_requerimento','aluno__first_name')
 
@@ -268,11 +199,20 @@ def req_list_avaliacao(request):
     # PROFESSOR
     elif (professor != None):
         if (criterio):
-            requerimento = Requerimento.objects.filter(professor_atividade=pessoa_logada, situacao=1,
-                                                       tipo_requerimento__nome__contains=criterio).order_by(
+            requerimento = Requerimento.objects.filter(professor_atividade=pessoa_logada,situacao=1).order_by(
                 'data_solicitacao_requerimento','aluno__first_name')
+        if (criterio_disciplina):
+            requerimento = Requerimento.objects.filter(professor_atividade=pessoa_logada, situacao=1,
+                                                       disciplina__disciplina__nome__contains=criterio_disciplina).order_by(
+                'data_solicitacao_requerimento','aluno__first_name')
+
+        if (criterio or criterio_disciplina):
+            requerimento = Requerimento.objects.filter(professor_atividade=pessoa_logada,situacao=1,
+            aluno__first_name__contains=criterio,disciplina__disciplina__nome__contains=criterio_disciplina).order_by\
+                ('data_solicitacao_requerimento','aluno__first_name')
+
         else:
-            requerimento = Requerimento.objects.all().filter(professor_atividade=pessoa_logada, situacao=1).order_by(
+            requerimento = Requerimento.objects.all().filter(professor_atividade=pessoa_logada,situacao=1).order_by(
                 'data_solicitacao_requerimento','aluno__first_name')
             criterio = ""
         # Cria o mecanimos de paginação
@@ -285,18 +225,33 @@ def req_list_avaliacao(request):
         except EmptyPage:
             requerimento = paginator.page(paginator.num_pages)
         dados = {'requerimento': requerimento, 'criterio': criterio, 'paginator': paginator, 'page_obj': requerimento,
-                 "tipo_requerimento": tipo_requerimento, 'requerimentos_professor': requerimentos_professor}
+                 "tipo_requerimento": tipo_requerimento, "professores": professores,"disciplinas": disciplinas,'requerimentos_professor': requerimentos_professor}
         return render(request, 'req/req_list_prof.html', dados)
-
-
 
     # TECNICO ADMINISTRATIVO
     elif (tecnico != None):
         if (criterio):
-            requerimento = Requerimento.objects.filter(encaminhado_para=None, situacao=1,
-                                                       descricao__contains=criterio).order_by('data_solicitacao_requerimento','aluno__first_name')
+            requerimento = Requerimento.objects.filter(encaminhado_para=None,situacao=1,
+                                                       aluno__first_name__contains=criterio).order_by(
+                'tipo_requerimento', 'data_solicitacao_requerimento')
+
+        if (criterio_prof):
+            requerimento = Requerimento.objects.filter(encaminhado_para=None,situacao=1, professor_atividade__first_name__contains=criterio_prof,
+                                                       ).order_by('data_solicitacao_requerimento','aluno__first_name')
+        if (criterio_disciplina):
+            requerimento = Requerimento.objects.filter(encaminhado_para=None,situacao=1,
+                                                       disciplina__disciplina__nome__contains=criterio_disciplina).order_by(
+                'data_solicitacao_requerimento','aluno__first_name')
+
+        if (criterio_prof or criterio or criterio_disciplina ):
+            requerimento = Requerimento.objects.filter(encaminhado_para=None,situacao=1, professor_atividade__first_name__contains=criterio_prof
+            ,aluno__first_name__contains=criterio,disciplina__disciplina__nome__contains=criterio_disciplina).order_by\
+                ('data_solicitacao_requerimento','aluno__first_name')
+
+
         else:
-            requerimento = Requerimento.objects.filter(encaminhado_para=None, situacao=1).order_by('data_solicitacao_requerimento','aluno__first_name')
+            requerimento = Requerimento.objects.all().filter(encaminhado_para=None,situacao=1).order_by(
+                'data_solicitacao_requerimento','aluno__first_name')
             criterio = ""
         # Cria o mecanimos de paginação
         paginator = Paginator(requerimento, 10)
@@ -308,7 +263,7 @@ def req_list_avaliacao(request):
         except EmptyPage:
             requerimento = paginator.page(paginator.num_pages)
         dados = {'requerimento': requerimento, 'criterio': criterio, 'paginator': paginator, 'page_obj': requerimento,
-                 "tipo_requerimento": tipo_requerimento, 'requerimentos_professor': requerimentos_professor}
+                 "tipo_requerimento": tipo_requerimento, "professores": professores,"disciplinas": disciplinas,'requerimentos_professor': requerimentos_professor}
         return render(request, 'req/req_list_tecnico.html', dados)
 
 @login_required(login_url='login')
@@ -358,9 +313,13 @@ def req_update(request,pk):
 @login_required(login_url='login')
 @permission_required('appsgr.view_tipo_requerimento',login_url='erro_permissao')
 def req_list_deferidos(request):
-    criterio=request.GET.get('criterio')
+    criterio = request.GET.get('criterio')
+    criterio_prof = request.GET.get('professores')
+    criterio_disciplina = request.GET.get('disciplinas')
     pessoa_logada = Pessoa.objects.get(username=request.user.username)
-    tipo_requerimento=TipoRequerimento.objects.all().order_by('nome')
+    tipo_requerimento = TipoRequerimento.objects.all().order_by('nome')
+    professores = Professor.objects.all().order_by('first_name')
+    disciplinas = Disciplina.objects.all().order_by('nome')
     requerimentos_professor = []
 
     #Instanciando objetos
@@ -380,51 +339,70 @@ def req_list_deferidos(request):
         tecnico = Tecnico_Administrativo.objects.get(id=pessoa_logada.id)
     except Tecnico_Administrativo.DoesNotExist:
         tecnico = None
-    #ALUNO
-    if(aluno != None):
-        if (criterio):
-            requerimento=Requerimento.objects.filter(situacao=2,tipo_requerimento__nome__contains=criterio, aluno=aluno).order_by('tipo_requerimento','-data_solicitacao_requerimento')
-        else:
-            requerimento=Requerimento.objects.filter(situacao=2,aluno_id=aluno).order_by('tipo_requerimento','-data_solicitacao_requerimento') #| Requerimento.objects.filter(tipo_requerimento_id=2).order_by('tipo_requerimento','-data_solicitacao_requerimento')
-            criterio=""
-        #Cria o mecanimos de paginação
-        paginator=Paginator(requerimento,10)
-        page=request.GET.get('page')
-        try:
-            requerimento=paginator.page(page)
-        except PageNotAnInteger:
-            requerimento=paginator.page(1)
-        except EmptyPage:
-            requerimento=paginator.page(paginator.num_pages)
-        dados={'requerimento':requerimento,'criterio':criterio,'paginator':paginator,'page_obj':requerimento, "tipo_requerimento":tipo_requerimento}
-        return render(request, 'req/req_list_deferidos_alunos.html', dados)
-    # PROFESSOR
-    elif(professor != None):
-        if (criterio):
-            requerimento=Requerimento.objects.filter(situacao=2,tipo_requerimento__nome__contains=criterio, professor_atividade=pessoa_logada).order_by('tipo_requerimento','data_solicitacao_requerimento')
-        else:
-            requerimento=Requerimento.objects.all().filter(situacao=2,professor_atividade=pessoa_logada).order_by('tipo_requerimento','data_solicitacao_requerimento')
-            criterio=""
-        #Cria o mecanimos de paginação
-        paginator=Paginator(requerimento,10)
-        page=request.GET.get('page')
-        try:
-            requerimento=paginator.page(page)
-        except PageNotAnInteger:
-            requerimento=paginator.page(1)
-        except EmptyPage:
-            requerimento=paginator.page(paginator.num_pages)
-        dados={'requerimento':requerimento,'criterio':criterio,'paginator':paginator,'page_obj':requerimento, "tipo_requerimento":tipo_requerimento, 'requerimentos_professor':requerimentos_professor}
-        return render(request, 'req/req_list_deferidos_prof.html', dados)
-    #COORDENADOR
+
+        # ALUNO
+    if (aluno != None):
+            if (criterio_prof):
+                requerimento = Requerimento.objects.filter(situacao=2, aluno=aluno,
+                                                           professor_atividade__first_name__contains=criterio_prof,
+                                                           ).order_by('data_solicitacao_requerimento')
+            if (criterio_disciplina):
+                requerimento = Requerimento.objects.filter(aluno=aluno, situacao=2,
+                                                           disciplina__disciplina__nome__contains=criterio_disciplina).order_by(
+                    'data_solicitacao_requerimento')
+
+            if (criterio_prof or criterio_disciplina):
+                requerimento = Requerimento.objects.filter(aluno=aluno, situacao=2,
+                                                           professor_atividade__first_name__contains=criterio_prof
+                                                           ,
+                                                           disciplina__disciplina__nome__contains=criterio_disciplina).order_by \
+                    ('data_solicitacao_requerimento')
+
+
+            else:
+                requerimento = Requerimento.objects.all().filter(aluno=aluno, situacao=2).order_by(
+                    'data_solicitacao_requerimento')
+                criterio = ""
+            # Cria o mecanimos de paginação
+            paginator = Paginator(requerimento, 10)
+            page = request.GET.get('page')
+            try:
+                requerimento = paginator.page(page)
+            except PageNotAnInteger:
+                requerimento = paginator.page(1)
+            except EmptyPage:
+                requerimento = paginator.page(paginator.num_pages)
+            dados = {'requerimento': requerimento, 'criterio': criterio, 'paginator': paginator,
+                     'page_obj': requerimento,
+                     "tipo_requerimento": tipo_requerimento, "professores": professores, "disciplinas": disciplinas,
+                     'requerimentos_professor': requerimentos_professor}
+            return render(request, 'req/req_list_deferidos_alunos.html', dados)
+
+    # COORDENADOR
     elif (coordenador != None):
         if (criterio):
-            requerimento = Requerimento.objects.filter(situacao=2, tipo_requerimento__nome__contains=criterio,
-                                                       encaminhado_para=pessoa_logada).order_by('tipo_requerimento',
-                                                                                                   'data_solicitacao_requerimento')
-        else:
-            requerimento = Requerimento.objects.all().filter(situacao=2, encaminhado_para=pessoa_logada).order_by(
+            requerimento = Requerimento.objects.filter(situacao=2, encaminhado_para=pessoa_logada,
+                                                       aluno__first_name__contains=criterio).order_by(
                 'tipo_requerimento', 'data_solicitacao_requerimento')
+
+        if (criterio_prof):
+            requerimento = Requerimento.objects.filter(situacao=2,
+                                                       professor_atividade__first_name__contains=criterio_prof,
+                                                       ).order_by('data_solicitacao_requerimento', 'aluno__first_name')
+        if (criterio_disciplina):
+            requerimento = Requerimento.objects.filter(encaminhado_para=pessoa_logada, situacao=2,
+                                                       disciplina__disciplina__nome__contains=criterio_disciplina).order_by(
+                'data_solicitacao_requerimento', 'aluno__first_name')
+
+        if (criterio_prof or criterio or criterio_disciplina):
+            requerimento = Requerimento.objects.filter(situacao=2,
+                                                       professor_atividade__first_name__contains=criterio_prof
+                                                       , aluno__first_name__contains=criterio,
+                                                       disciplina__disciplina__nome__contains=criterio_disciplina).order_by \
+                ('data_solicitacao_requerimento', 'aluno__first_name')
+        else:
+            requerimento = Requerimento.objects.all().filter(encaminhado_para=pessoa_logada, situacao=2).order_by(
+                'data_solicitacao_requerimento', 'aluno__first_name')
             criterio = ""
         # Cria o mecanimos de paginação
         paginator = Paginator(requerimento, 10)
@@ -436,15 +414,53 @@ def req_list_deferidos(request):
         except EmptyPage:
             requerimento = paginator.page(paginator.num_pages)
         dados = {'requerimento': requerimento, 'criterio': criterio, 'paginator': paginator, 'page_obj': requerimento,
-                 "tipo_requerimento": tipo_requerimento, 'requerimentos_professor': requerimentos_professor}
+                 "tipo_requerimento": tipo_requerimento, "professores": professores, "disciplinas": disciplinas,
+                 'requerimentos_professor': requerimentos_professor}
         return render(request, 'req/req_list_deferidos_coor.html', dados)
+
+    # PROFESSOR
+    elif(professor != None):
+        if (criterio):
+            requerimento = Requerimento.objects.filter( situacao=2,professor_atividade=pessoa_logada,
+                                                       aluno__first_name__contains=criterio).order_by(
+                'data_solicitacao_requerimento','aluno__first_name')
+        if (criterio_disciplina):
+            requerimento = Requerimento.objects.filter(professor_atividade=pessoa_logada, situacao=2,
+                                                       disciplina__disciplina__nome__contains=criterio_disciplina).order_by(
+                'data_solicitacao_requerimento','aluno__first_name')
+
+        if (criterio or criterio_disciplina ):
+            requerimento = Requerimento.objects.filter(professor_atividade=pessoa_logada,situacao=2,
+            aluno__first_name__contains=criterio,disciplina__disciplina__nome__contains=criterio_disciplina).order_by\
+                ('data_solicitacao_requerimento','aluno__first_name')
+        else:
+            requerimento = Requerimento.objects.all().filter(professor_atividade=pessoa_logada,situacao=2).order_by(
+                'data_solicitacao_requerimento','aluno__first_name')
+            criterio = ""
+        # Cria o mecanimos de paginação
+        paginator = Paginator(requerimento, 10)
+        page = request.GET.get('page')
+        try:
+            requerimento = paginator.page(page)
+        except PageNotAnInteger:
+            requerimento = paginator.page(1)
+        except EmptyPage:
+            requerimento = paginator.page(paginator.num_pages)
+        dados = {'requerimento': requerimento, 'criterio': criterio, 'paginator': paginator, 'page_obj': requerimento,
+                 "tipo_requerimento": tipo_requerimento, "professores": professores,"disciplinas": disciplinas,'requerimentos_professor': requerimentos_professor}
+        return render(request, 'req/req_list_deferidos_prof.html', dados)
+
 
 @login_required(login_url='login')
 @permission_required('appsgr.view_requerimento',login_url='erro_permissao')
 def req_list_indeferidos(request):
-    criterio=request.GET.get('criterio')
+    criterio = request.GET.get('criterio')
+    criterio_prof = request.GET.get('professores')
+    criterio_disciplina = request.GET.get('disciplinas')
     pessoa_logada = Pessoa.objects.get(username=request.user.username)
-    tipo_requerimento=TipoRequerimento.objects.all().order_by('nome')
+    tipo_requerimento = TipoRequerimento.objects.all().order_by('nome')
+    professores = Professor.objects.all().order_by('first_name')
+    disciplinas = Disciplina.objects.all().order_by('nome')
     requerimentos_professor = []
 
     #Instanciando objetos
@@ -465,69 +481,69 @@ def req_list_indeferidos(request):
     except Tecnico_Administrativo.DoesNotExist:
         tecnico = None
 
-    #ALUNO
-    if(aluno != None):
+        # ALUNO
+    if (aluno != None):
+            if (criterio_prof):
+                requerimento = Requerimento.objects.filter(situacao=3, aluno=aluno,
+                                                           professor_atividade__first_name__contains=criterio_prof,
+                                                           ).order_by('data_solicitacao_requerimento')
+            if (criterio_disciplina):
+                requerimento = Requerimento.objects.filter(aluno=aluno, situacao=3,
+                                                           disciplina__disciplina__nome__contains=criterio_disciplina).order_by(
+                    'data_solicitacao_requerimento')
+
+            if (criterio_prof or criterio_disciplina):
+                requerimento = Requerimento.objects.filter(aluno=aluno, situacao=3,
+                                                           professor_atividade__first_name__contains=criterio_prof
+                                                           ,
+                                                           disciplina__disciplina__nome__contains=criterio_disciplina).order_by \
+                    ('data_solicitacao_requerimento')
+
+
+            else:
+                requerimento = Requerimento.objects.all().filter(aluno=aluno, situacao=3).order_by(
+                    'data_solicitacao_requerimento')
+                criterio = ""
+            # Cria o mecanimos de paginação
+            paginator = Paginator(requerimento, 10)
+            page = request.GET.get('page')
+            try:
+                requerimento = paginator.page(page)
+            except PageNotAnInteger:
+                requerimento = paginator.page(1)
+            except EmptyPage:
+                requerimento = paginator.page(paginator.num_pages)
+            dados = {'requerimento': requerimento, 'criterio': criterio, 'paginator': paginator,
+                     'page_obj': requerimento,
+                     "tipo_requerimento": tipo_requerimento, "professores": professores, "disciplinas": disciplinas,
+                     'requerimentos_professor': requerimentos_professor}
+            return render(request, 'req/req_list_indeferidos_alunos.html', dados)
+
+    # COORDENADOR
+    elif (coordenador != None):
         if (criterio):
-            requerimento=Requerimento.objects.filter(situacao=3,tipo_requerimento__nome__contains=criterio, aluno=aluno).order_by('tipo_requerimento','-data_solicitacao_requerimento')
-        else:
-            requerimento=Requerimento.objects.filter(situacao=3,aluno_id=aluno).order_by('tipo_requerimento','-data_solicitacao_requerimento') #| Requerimento.objects.filter(tipo_requerimento_id=2).order_by('tipo_requerimento','-data_solicitacao_requerimento')
-            criterio=""
-        #Cria o mecanimos de paginação
-        paginator=Paginator(requerimento,10)
-        page=request.GET.get('page')
-        try:
-            requerimento=paginator.page(page)
-        except PageNotAnInteger:
-            requerimento=paginator.page(1)
-        except EmptyPage:
-            requerimento=paginator.page(paginator.num_pages)
-        dados={'requerimento':requerimento,'criterio':criterio,'paginator':paginator,'page_obj':requerimento, "tipo_requerimento":tipo_requerimento}
-        return render(request, 'req/req_list_indeferidos_alunos.html', dados)
-    #COORDENADOR
-    elif(coordenador != None):
-        if (criterio):
-            requerimento=Requerimento.objects.filter(situacao=3,tipo_requerimento__nome__contains=criterio, encaminhado_para=pessoa_logada).order_by('tipo_requerimento','data_solicitacao_requerimento')
-        else:
-            requerimento=Requerimento.objects.all().filter(situacao=3,encaminhado_para=pessoa_logada).order_by('tipo_requerimento','data_solicitacao_requerimento')
-            criterio=""
-        #Cria o mecanimos de paginação
-        paginator=Paginator(requerimento,10)
-        page=request.GET.get('page')
-        try:
-            requerimento=paginator.page(page)
-        except PageNotAnInteger:
-            requerimento=paginator.page(1)
-        except EmptyPage:
-            requerimento=paginator.page(paginator.num_pages)
-        dados={'requerimento':requerimento,'criterio':criterio,'paginator':paginator,'page_obj':requerimento, "tipo_requerimento":tipo_requerimento, 'requerimentos_professor':requerimentos_professor}
-        return render(request, 'req/req_list_indeferidos_coor.html', dados)
-    # PROFESSOR
-    elif(professor != None):
-        if (criterio):
-            requerimento=Requerimento.objects.filter(situacao=3,tipo_requerimento__nome__contains=criterio, professor_atividade=pessoa_logada).order_by('tipo_requerimento','data_solicitacao_requerimento')
-        else:
-            requerimento=Requerimento.objects.all().filter(situacao=3,professor_atividade=pessoa_logada).order_by('tipo_requerimento','data_solicitacao_requerimento')
-            criterio=""
-        #Cria o mecanimos de paginação
-        paginator=Paginator(requerimento,10)
-        page=request.GET.get('page')
-        try:
-            requerimento=paginator.page(page)
-        except PageNotAnInteger:
-            requerimento=paginator.page(1)
-        except EmptyPage:
-            requerimento=paginator.page(paginator.num_pages)
-        dados={'requerimento':requerimento,'criterio':criterio,'paginator':paginator,'page_obj':requerimento, "tipo_requerimento":tipo_requerimento, 'requerimentos_professor':requerimentos_professor}
-        return render(request, 'req/req_list_indeferidos_prof.html', dados)
-    # TECNICO ADMINISTRATIVO
-    elif (tecnico != None):
-        if (criterio):
-            requerimento = Requerimento.objects.filter(situacao=3, tipo_requerimento__nome__contains=criterio,
-                                                       encaminhado_para=None).order_by('tipo_requerimento',
-                                                                                                'data_solicitacao_requerimento')
-        else:
-            requerimento = Requerimento.objects.all().filter(situacao=3,encaminhado_para=None).order_by(
+            requerimento = Requerimento.objects.filter(situacao=3, encaminhado_para=pessoa_logada,
+                                                       aluno__first_name__contains=criterio).order_by(
                 'tipo_requerimento', 'data_solicitacao_requerimento')
+
+        if (criterio_prof):
+            requerimento = Requerimento.objects.filter(situacao=3,
+                                                       professor_atividade__first_name__contains=criterio_prof,
+                                                       ).order_by('data_solicitacao_requerimento', 'aluno__first_name')
+        if (criterio_disciplina):
+            requerimento = Requerimento.objects.filter(encaminhado_para=pessoa_logada, situacao=3,
+                                                       disciplina__disciplina__nome__contains=criterio_disciplina).order_by(
+                'data_solicitacao_requerimento', 'aluno__first_name')
+
+        if (criterio_prof or criterio or criterio_disciplina):
+            requerimento = Requerimento.objects.filter(situacao=3,
+                                                       professor_atividade__first_name__contains=criterio_prof
+                                                       , aluno__first_name__contains=criterio,
+                                                       disciplina__disciplina__nome__contains=criterio_disciplina).order_by \
+                ('data_solicitacao_requerimento', 'aluno__first_name')
+        else:
+            requerimento = Requerimento.objects.all().filter(encaminhado_para=pessoa_logada, situacao=3).order_by(
+                'data_solicitacao_requerimento', 'aluno__first_name')
             criterio = ""
         # Cria o mecanimos de paginação
         paginator = Paginator(requerimento, 10)
@@ -539,6 +555,83 @@ def req_list_indeferidos(request):
         except EmptyPage:
             requerimento = paginator.page(paginator.num_pages)
         dados = {'requerimento': requerimento, 'criterio': criterio, 'paginator': paginator, 'page_obj': requerimento,
-                 "tipo_requerimento": tipo_requerimento, 'requerimentos_professor': requerimentos_professor}
-        return render(request, 'req/req_list_indeferidos_tecnico.html', dados)
+                 "tipo_requerimento": tipo_requerimento, "professores": professores, "disciplinas": disciplinas,
+                 'requerimentos_professor': requerimentos_professor}
+        return render(request, 'req/req_list_indeferidos_coor.html', dados)
 
+
+    # PROFESSOR
+    elif(professor != None):
+        if (criterio):
+            requerimento = Requerimento.objects.filter(situacao=3,professor_atividade=pessoa_logada,
+                                                       aluno__first_name__contains=criterio).order_by(
+                'data_solicitacao_requerimento','aluno__first_name')
+        if (criterio_disciplina):
+            requerimento = Requerimento.objects.filter(professor_atividade=pessoa_logada, situacao=3,
+                                                       disciplina__disciplina__nome__contains=criterio_disciplina).order_by(
+                'data_solicitacao_requerimento','aluno__first_name')
+
+        if (criterio or criterio_disciplina ):
+            requerimento = Requerimento.objects.filter(professor_atividade=pessoa_logada,situacao=3,
+            aluno__first_name__contains=criterio,disciplina__disciplina__nome__contains=criterio_disciplina).order_by\
+                ('data_solicitacao_requerimento','aluno__first_name')
+
+
+        else:
+            requerimento = Requerimento.objects.all().filter(professor_atividade=pessoa_logada,situacao=3).order_by(
+                'data_solicitacao_requerimento','aluno__first_name')
+            criterio = ""
+        # Cria o mecanimos de paginação
+        paginator = Paginator(requerimento, 10)
+        page = request.GET.get('page')
+        try:
+            requerimento = paginator.page(page)
+        except PageNotAnInteger:
+            requerimento = paginator.page(1)
+        except EmptyPage:
+            requerimento = paginator.page(paginator.num_pages)
+        dados = {'requerimento': requerimento, 'criterio': criterio, 'paginator': paginator, 'page_obj': requerimento,
+                 "tipo_requerimento": tipo_requerimento, "professores": professores,"disciplinas": disciplinas,'requerimentos_professor': requerimentos_professor}
+        return render(request, 'req/req_list_indeferidos_prof.html', dados)
+
+    # TECNICO ADMINISTRATIVO
+    elif (tecnico != None):
+        if (criterio):
+            requerimento = Requerimento.objects.filter(encaminhado_para=None, situacao=3,
+                                                       aluno__first_name__contains=criterio).order_by(
+                'tipo_requerimento', 'data_solicitacao_requerimento')
+
+        if (criterio_prof):
+            requerimento = Requerimento.objects.filter(encaminhado_para=None, situacao=3,
+                                                       professor_atividade__first_name__contains=criterio_prof,
+                                                       ).order_by('data_solicitacao_requerimento', 'aluno__first_name')
+        if (criterio_disciplina):
+            requerimento = Requerimento.objects.filter(encaminhado_para=None, situacao=3,
+                                                       disciplina__disciplina__nome__contains=criterio_disciplina).order_by(
+                'data_solicitacao_requerimento', 'aluno__first_name')
+
+        if (criterio_prof or criterio or criterio_disciplina):
+            requerimento = Requerimento.objects.filter(encaminhado_para=None, situacao=3,
+                                                       professor_atividade__first_name__contains=criterio_prof
+                                                       , aluno__first_name__contains=criterio,
+                                                       disciplina__disciplina__nome__contains=criterio_disciplina).order_by \
+                ('data_solicitacao_requerimento', 'aluno__first_name')
+
+
+        else:
+            requerimento = Requerimento.objects.all().filter(encaminhado_para=None, situacao=3).order_by(
+                'data_solicitacao_requerimento', 'aluno__first_name')
+            criterio = ""
+        # Cria o mecanimos de paginação
+        paginator = Paginator(requerimento, 10)
+        page = request.GET.get('page')
+        try:
+            requerimento = paginator.page(page)
+        except PageNotAnInteger:
+            requerimento = paginator.page(1)
+        except EmptyPage:
+            requerimento = paginator.page(paginator.num_pages)
+        dados = {'requerimento': requerimento, 'criterio': criterio, 'paginator': paginator, 'page_obj': requerimento,
+                 "tipo_requerimento": tipo_requerimento, "professores": professores, "disciplinas": disciplinas,
+                 'requerimentos_professor': requerimentos_professor}
+        return render(request, 'req/req_list_indeferidos_tecnico.html', dados)

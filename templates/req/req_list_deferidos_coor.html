@@ -1,24 +1,68 @@
 {% extends 'base.html' %}
 {% block conteudo %}
-
     {% if not requerimento %}
-            <h2 align="center">NÃO HÁ REQUERIMENTOS</h2>
-    {% else %}
     <h2>Requerimentos</h2>
-    <form class="navbar-form navbar-left" role="search" method="get" action="{% url 'req_list_deferidos' %}">
+    <form class="navbar-form navbar-left" role="search" id="action" method="get" action="{% url 'req_list_deferidos' %}">
       <div class="form-group">
-          <label for="criterio">Descrição:</label>
-        <input type="text" id="criterio" name="criterio" value="{{ criterio }}" class="form-control" placeholder="Descrição">
+          <label for="criterio">Aluno:</label>
+        <input type="text" id="criterio" name="criterio" value="{{ criterio }}" class="form-control" placeholder="Nome do Aluno">
+          <label for="professores">Professor:</label>
+          <select class="form-control" id="professores" name="professores">
+              <option value="">Qualquer</option>
+              {% for field in professores %}
+                <option value="{{ field.first_name}}">{{ field.get_full_name }}</option>
+            {% endfor %}
+        </select>
+            <label for="disciplinas">Disciplina:</label>
+          <select class="form-control" id="disciplinas" name="disciplinas">
+              <option value="">Qualquer</option>
+              {% for field in disciplinas %}
+                <option value="{{ field.nome }}">{{ field.nome }}</option>
+            {% endfor %}
+        </select>
       </div>
-      <button type="submit" class="btn btn-default">Buscar</button>
+      <button type="submit" id="submit" class="btn btn-default">Buscar</button>
     </form>
     <table class="table table-hover">
         <tr>
             <th>Aluno</th>
             <th>Tipo</th>
             <th>Disciplina</th>
-            <th>Professor da Disciplina</th>
             <th>Data da Solicitação</th>
+            <th>Professor da Disciplina</th>
+            <th>Situação</th>
+    </table>
+        <div class="well well-sm" align="center">Não foi encontrado nenhum requerimento!</div>
+    {% else %}
+    <h2>Requerimentos</h2>
+    <form class="navbar-form navbar-left" role="search" id="action" method="get" action="{% url 'req_list_deferidos' %}">
+      <div class="form-group">
+          <label for="criterio">Aluno:</label>
+        <input type="text" id="criterio" name="criterio" value="{{ criterio }}" class="form-control" placeholder="Nome do Aluno">
+          <label for="professores">Professor:</label>
+          <select class="form-control" id="professores" name="professores">
+              <option value="">Qualquer</option>
+              {% for field in professores %}
+                <option value="{{ field.first_name}}">{{ field.get_full_name }}</option>
+            {% endfor %}
+        </select>
+            <label for="disciplinas">Disciplina:</label>
+          <select class="form-control" id="disciplinas" name="disciplinas">
+              <option value="">Qualquer</option>
+              {% for field in disciplinas %}
+                <option value="{{ field.nome }}">{{ field.nome }}</option>
+            {% endfor %}
+        </select>
+      </div>
+      <button type="submit" id="submit" class="btn btn-default">Buscar</button>
+    </form>
+    <table class="table table-hover">
+        <tr>
+            <th>Aluno</th>
+            <th>Tipo</th>
+            <th>Disciplina</th>
+            <th>Data da Solicitação</th>
+            <th>Professor da Disciplina</th>
             <th>Situação</th>
         </tr>
         {% for requerimento in requerimento %}
@@ -26,12 +70,12 @@
                 <td><a href="{% url 'req_detail' requerimento.pk %}">{{ requerimento.aluno.first_name }}</a></td>
                 <td>{{ requerimento.tipo_requerimento }}</td>
                 <td> {{ requerimento.disciplina }} </td>
-                <td> {{ requerimento.professor_atividade }} </td>
                 <td>{{ requerimento.data_solicitacao_requerimento }}</td>
+                <td> {{ requerimento.professor_atividade }}</td>
                 <td>{{ requerimento.situacao }}</td>
             </tr>
         {% endfor %}
     </table>
-    {% include 'paginacao.html' %}
+        {% include 'paginacao.html' %}
     {% endif %}
 {% endblock %}
