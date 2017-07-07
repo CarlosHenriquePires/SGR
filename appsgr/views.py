@@ -7,6 +7,7 @@ from django.template import Context
 from appsgr.forms import *
 from django.forms import modelform_factory
 from django.http import HttpResponse
+from django.core.mail import send_mail
 
 @login_required(login_url='login')
 @permission_required('appsgr.detail_requerimento',login_url='erro_permissao')
@@ -48,6 +49,7 @@ def erro_permissao(request):
 @login_required(login_url='login')
 @permission_required('appsgr.add_requerimento',login_url='erro_permissao')
 def req_new(request):
+    pessoa_logada = Pessoa.objects.get(username=request.user.username)
     if (request.method=="GET"):
         id_tipo_requerimento = request.GET.get("id_tipo_requerimento")
         request.session[0]=id_tipo_requerimento
@@ -64,6 +66,11 @@ def req_new(request):
             requerimento.tipo_requerimento=TipoRequerimento.objects.get(id=id_tipo_requerimento)
             requerimento.aluno = Aluno.objects.get(username=request.user.username)
             requerimento.save()
+            email = 'Atenção! Um novo requerimento foi solicitado pelo aluno {} {}, de matrícula {}, ' \
+                    'do curso {} para a disciplina {}. Favor checar o sistema. '.format(requerimento.aluno.first_name,requerimento.aluno.last_name,requerimento.aluno.username,requerimento.aluno.curso.nome,requerimento.disciplina)
+
+            send_mail('Novo Requerimento Solicitado!', email, 'notificacao.sgr@gmail.com',
+                      ['carluxhenrique@gmail.com'], fail_silently=False)
             return redirect('req_list_avaliacao')
     else:
         form=RequerimentoFormNovo()
