@@ -309,11 +309,32 @@ def req_update(request,pk):
         form=RequerimentoForm(request.POST,request.FILES,instance=requerimento)
         if (form.is_valid()):
             form.save()
+            situacao = "Em Avaliação"
+            if (requerimento.situacao.tipo != situacao):
+                email = 'Atenção! Caro aluno, {} {} de matrícula {}, ' \
+                        'do curso {}, a situação do requerimento solicitado para a disciplina {}, foi alterado para {}.' \
+                        ' Favor checar o sistema. '.format(
+                    requerimento.aluno.first_name, requerimento.aluno.last_name, requerimento.aluno.username,
+                    requerimento.aluno.curso.nome, requerimento.disciplina, requerimento.situacao)
+
+                send_mail('Situação do Requerimento foi Atualizada!', email, 'notificacao.sgr@gmail.com',
+                          ['carluxhenrique@gmail.com'], fail_silently=False)
+            if (requerimento.situacao.tipo == situacao and requerimento.encaminhado_para != None):
+                email = 'Atenção! Caro aluno, {} {} de matrícula {}, ' \
+                        'do curso {}, o requerimento solicitado para a disciplina {}, foi encaminhado para o Coordenador {} {}. ' \
+                        'Favor checar o sistema para mais informações.'.format(
+                    requerimento.aluno.first_name, requerimento.aluno.last_name, requerimento.aluno.username,
+                    requerimento.aluno.curso.nome, requerimento.disciplina, requerimento.encaminhado_para.first_name,requerimento.encaminhado_para.last_name)
+
+                send_mail('Requerimento Encaminhado ao Coordenador!', email, 'notificacao.sgr@gmail.com',
+                          ['carluxhenrique@gmail.com'], fail_silently=False)
+
             return redirect('home')
+
     else:
         form=RequerimentoForm(instance=requerimento)
         dados={'form':form}
-        return render(request, 'req/req_form.html', dados)
+        return render(request, 'req/req_form_update.html', dados)
 
 ##############
 

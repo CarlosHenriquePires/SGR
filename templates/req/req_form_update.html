@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+
+    {% load bootstrap %}
+     <h3 style="margin: 30px">
+             Editar Requerimento </h3>
+             <form method="POST" role="form" class="form-group" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% for field in form %}
+                {{ field.errors }}
+                <div align="center" >
+                    <p><h3><span class="label label-default" ></span></h3></p>
+                </div>
+            {% endfor %}
+                </p>
+                {{ form|bootstrap_horizontal:'col-lg-4' }}
+                <p/>
+                <div align="center">
+                    <input type="submit" class="btn btn-success btn-lg" value="Salvar">
+                </div>
+        </form>
+
+{% endblock %}
