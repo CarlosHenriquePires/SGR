@@ -138,6 +138,6 @@ SERVE_STATIC_FILES = True
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'notificacao.sgr@gmail.com'
-EMAIL_HOST_PASSWORD = 'r3d3s123'
+EMAIL_HOST_PASSWORD = '**************'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
