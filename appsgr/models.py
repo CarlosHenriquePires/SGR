@@ -3,31 +3,53 @@ from django.contrib.auth.models import User, Group
 from datetime import datetime
 
 # Modelo Pessoa
-class Pessoa(User):
-    data_nascimento = models.DateField("Data de Nascimento", null=True, blank=True)
+class Pessoa(models.Model):
+    idpessoa = models.IntegerField("Pessoa",null=False, blank=False,primary_key=True)
+    nome = models.CharField("Nome",max_length=250, blank=True, null=True)
+    sobrenome = models.CharField("Sobrenome",max_length=250, blank=True, null=True)
     cpf = models.CharField("CPF", max_length=14, unique=True, null=False, blank=False)
+    email = models.EmailField("Email", max_length=40,null=False, blank=False)
+    data_nascimento = models.DateField("Data de Nascimento", null=True, blank=True)
     telefone = models.CharField("Telefone",max_length=11, blank=True, null=True)
 
     def __str__(self):
-        return self.pessoa.first_name
+        return self.nome
 
 # Modelo Professor
-class Professor(Pessoa):
+class Professor(User):
+    pessoa = models.ForeignKey(Pessoa,on_delete=models.PROTECT, verbose_name="Professor",
+                               null=False, blank=False)
 
     def __str__(self):
-        return self.pessoa.first_name + " " + self.pessoa.last_name
+        return self.pessoa.nome + " " + self.pessoa.sobrenome
+
+    def get_full_name(self):
+        """
+        Returns the first_name plus the last_name, with a space in between.
+        """
+        full_name = '%s %s' % (self.pessoa.nome, self.pessoa.sobrenome)
+        return full_name.strip()
 
 # Modelo Coordenador
-class Coordenador(Pessoa):
+class Coordenador(Professor):
 
     def __str__(self):
-            return self.pessoa.first_name +" "+ self.pessoa.last_name
+        return self.pessoa.nome + " " + self.pessoa.sobrenome
 
 # Modelo Tecnico Administrativo
-class Tecnico_Administrativo(Pessoa):
+class Tecnico_Administrativo(User):
+    pessoa = models.ForeignKey(Pessoa, on_delete=models.PROTECT, verbose_name="Tecnico_Administrativo",
+                               null=False, blank=False)
 
     def __str__(self):
-        return self.pessoa.first_name +" "+ self.pessoa.last_name
+        return self.pessoa.nome + " " + self.pessoa.sobrenome
+
+    def get_full_name(self):
+        """
+        Returns the first_name plus the last_name, with a space in between.
+        """
+        full_name = '%s %s' % (self.pessoa.nome, self.pessoa.sobrenome)
+        return full_name.strip()
 
 # Modelo Curso
 class Curso(models.Model):
@@ -38,11 +60,20 @@ class Curso(models.Model):
         return self.nome
 
 # Modelo Aluno
-class Aluno(Pessoa):
+class Aluno(User):
+    pessoa = models.ForeignKey(Pessoa, on_delete=models.PROTECT, verbose_name="Aluno",
+                               null=False, blank=False)
     curso = models.ForeignKey(Curso, on_delete=models.PROTECT, verbose_name="Curso", null=False, blank=False)
 
     def __str__(self):
-        return self.pessoa.first_name
+        return self.pessoa.nome+" " + self.pessoa.sobrenome
+
+    def get_full_name(self):
+        """
+        Returns the first_name plus the last_name, with a space in between.
+        """
+        full_name = '%s %s' % (self.pessoa.nome, self.pessoa.sobrenome)
+        return full_name.strip()
 
 # Modelo Disciplina
 class Disciplina(models.Model):
@@ -98,7 +129,7 @@ class Requerimento(models.Model):
     aluno = models.ForeignKey(Aluno, on_delete=models.PROTECT, related_name="Aluno", null=False)
     data_solicitacao_requerimento = models.DateField("Data da solicitação", null=True, blank=True, auto_now_add=True, editable=False)
     tipo_requerimento = models.ForeignKey(TipoRequerimento, on_delete=models.PROTECT, verbose_name="Tipo de Requerimento", null=False)
-    disciplina = models.ForeignKey(AlunoDisciplina, on_delete=models.PROTECT, related_name="Disciplina", null=True, blank=True)
+    disciplina = models.ForeignKey(AlunoDisciplina,on_delete=models.PROTECT, related_name="Disciplina", null=True, blank=True)
     observacoes = models.TextField("Observações", blank=True, null=True)
     justificativa = models.TextField("Justificativa", blank=True, null=True)
     data_atividade = models.DateField("Data da atividade", null=True, blank=True)

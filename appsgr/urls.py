@@ -43,6 +43,7 @@ urlpatterns=[
     url(r'^logout/$', logout, {'next_page': 'home'}, name='logout'),
     url(r'^curso/$',curso,name='curso'),
     url(r'^erro_permissao/$', erro_permissao, name='erro_permissao'),
+    url(r'^ok/$', ok, name='ok'),
 
 # Urls para os requerimentos
     url(r'^req/list/$',req_list,name='req_list'),

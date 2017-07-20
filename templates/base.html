@@ -63,7 +63,7 @@
                             <span class="profile-ava">
                                 <img alt="" src="{% static 'NiceAdmin/img/user.jpg' %}">
                             </span>
-                            <span class="username">{{ request.user.get_full_name }}</span>
+                            <span class="username">{{ request.user.username }}</span>
                             <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu extended logout">
@@ -126,13 +126,13 @@
 
                     </ol>
                 </div>
-                <dev>
-                    <dev align="center">
+                <div>
+                    <div>
                         {% block conteudo %}
                                 <h1>Bem vindo ao sistema de Sistema de Requerimentos</h1>
                         {% endblock %}
-                    </dev>
-                </dev>
+                    </div>
+                </div>
 
 
             </div>

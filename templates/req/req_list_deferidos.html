@@ -2,7 +2,7 @@
 {% block conteudo %}
     {% if not requerimento %}
     <h2>Requerimentos</h2>
-    <form class="navbar-form navbar-left" role="search" id="action" method="get" action="{% url 'req_list_indeferidos' %}">
+    <form class="navbar-form navbar-left" role="search" id="action" method="get" action="{% url 'req_list_deferidos' %}">
       <div class="form-group">
           <label for="criterio">Aluno:</label>
         <input type="text" id="criterio" name="criterio" value="{{ criterio }}" class="form-control" placeholder="Nome do Aluno">
@@ -10,7 +10,7 @@
           <select class="form-control" id="professores" name="professores">
               <option value="">Qualquer</option>
               {% for field in professores %}
-                <option value="{{ field.first_name}}">{{ field.get_full_name }}</option>
+                <option value="{{ field.pessoa.nome}}">{{ field.pessoa.nome}} {{ field.pessoa.sobrenome}}</option>
             {% endfor %}
         </select>
             <label for="disciplinas">Disciplina:</label>
@@ -35,7 +35,7 @@
         <div class="well well-sm" align="center">Não foi encontrado nenhum requerimento!</div>
     {% else %}
     <h2>Requerimentos</h2>
-    <form class="navbar-form navbar-left" role="search" id="action" method="get" action="{% url 'req_list_indeferidos' %}">
+    <form class="navbar-form navbar-left" role="search" id="action" method="get" action="{% url 'req_list_deferidos' %}">
       <div class="form-group">
           <label for="criterio">Aluno:</label>
         <input type="text" id="criterio" name="criterio" value="{{ criterio }}" class="form-control" placeholder="Nome do Aluno">
@@ -43,7 +43,7 @@
           <select class="form-control" id="professores" name="professores">
               <option value="">Qualquer</option>
               {% for field in professores %}
-                <option value="{{ field.first_name}}">{{ field.get_full_name }}</option>
+                <option value="{{field.pessoa.nome}}">{{field.pessoa.nome}} {{field.pessoa.sobrenome}}</option>
             {% endfor %}
         </select>
             <label for="disciplinas">Disciplina:</label>
@@ -67,7 +67,7 @@
         </tr>
         {% for requerimento in requerimento %}
             <tr>
-                <td><a href="{% url 'req_detail' requerimento.pk %}">{{ requerimento.aluno.first_name }}</a></td>
+                <td><a href="{% url 'req_detail' requerimento.pk %}">{{ requerimento.aluno.pessoa.nome }}</a></td>
                 <td>{{ requerimento.tipo_requerimento }}</td>
                 <td> {{ requerimento.disciplina }} </td>
                 <td>{{ requerimento.data_solicitacao_requerimento }}</td>
