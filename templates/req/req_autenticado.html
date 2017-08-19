@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+    {% if not requerimento %}
+    <h3>Autenticidade do Requerimento</h3>
+    <form class="navbar-form navbar-left" role="search" id="action" method="get" action="{% url 'req_autenticado' %}">
+      <div class="form-group">
+          <label for="criterio">Código:</label>
+        <input type="text" id="criterio" name="criterio" value="{{ criterio }}" class="form-control" placeholder="Nome do Aluno">
+          <label for="professores">Professor:</label>
+          <select class="form-control" id="professores" name="professores">
+              <option value="">Qualquer</option>
+              {% for field in professores %}
+                <option value="{{ field.pessoa.nome }}">{{ field.pessoa.nome }} {{ field.pessoa.sobrenome }}</option>
+            {% endfor %}
+        </select>
+            <label for="disciplinas">Disciplina:</label>
+          <select class="form-control" id="disciplinas" name="disciplinas">
+              <option value="">Qualquer</option>
+              {% for field in disciplinas %}
+                <option value="{{ field.nome }}">{{ field.nome }}</option>
+            {% endfor %}
+        </select>
+      </div>
+      <button type="submit" id="submit" class="btn btn-default">Buscar</button>
+    </form>
+    <table class="table table-hover">
+        <tr>
+            <th>Aluno</th>
+            <th>Tipo</th>
+            <th>Disciplina</th>
+            <th>Data da Solicitação</th>
+            <th>Professor da Disciplina</th>
+            <th>Situação</th>
+            <th> Comprovante </th>
+    </table>
+        <div class="well well-sm" align="center">Não foi encontrado nenhum requerimento!</div>
+    {% else %}
+    <h3>Autenticidade do Requerimento</h3>
+    <form class="navbar-form navbar-left" role="search" id="action" method="get" action="{% url 'req_autenticado' %}">
+      <div class="form-group">
+          <label for="criterio">Código:</label>
+        <input type="text" id="criterio" name="criterio" value="{{ criterio }}" class="form-control" placeholder="Código">
+          <label for="professores">Professor:</label>
+          <select class="form-control" id="professores" name="professores">
+              <option value="">Qualquer</option>
+              {% for field in professores %}
+                <option value="{{ field.pessoa.nome }}">{{ field.pessoa.nome }} {{ field.pessoa.sobrenome }}</option>
+            {% endfor %}
+        </select>
+            <label for="disciplinas">Disciplina:</label>
+          <select class="form-control" id="disciplinas" name="disciplinas">
+              <option value="">Qualquer</option>
+              {% for field in disciplinas %}
+                <option value="{{ field.nome }}">{{ field.nome }}</option>
+            {% endfor %}
+        </select>
+      </div>
+      <button type="submit" id="submit" class="btn btn-default">Buscar</button>
+    </form>
+    <table class="table table-hover">
+        <tr>
+            <th>Aluno</th>
+            <th>Tipo</th>
+            <th>Disciplina</th>
+            <th>Data da Solicitação</th>
+            <th>Professor da Disciplina</th>
+            <th>Situação</th>
+        </tr>
+        {% for requerimento in requerimento %}
+            <tr>
+                <td><a href="{% url 'req_detail' requerimento.pk %}">{{ requerimento.aluno.pessoa.nome }}</a></td>
+                <td>{{ requerimento.tipo_requerimento }}</td>
+                <td> {{ requerimento.disciplina }} </td>
+                <td>{{ requerimento.data_solicitacao_requerimento }}</td>
+                <td> {{ requerimento.professor_atividade }}</td>
+                <td>{{ requerimento.situacao }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+{% endblock %}
