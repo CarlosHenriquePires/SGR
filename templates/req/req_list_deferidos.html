@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block conteudo %}
     {% if not requerimento %}
-    <h2>Requerimentos</h2>
+    <h3>Requerimentos Deferidos</h3>
     <form class="navbar-form navbar-left" role="search" id="action" method="get" action="{% url 'req_list_deferidos' %}">
       <div class="form-group">
           <label for="criterio">Aluno:</label>
@@ -34,7 +34,7 @@
     </table>
         <div class="well well-sm" align="center">Não foi encontrado nenhum requerimento!</div>
     {% else %}
-    <h2>Requerimentos</h2>
+    <h3>Requerimentos Deferidos</h3>
     <form class="navbar-form navbar-left" role="search" id="action" method="get" action="{% url 'req_list_deferidos' %}">
       <div class="form-group">
           <label for="criterio">Aluno:</label>

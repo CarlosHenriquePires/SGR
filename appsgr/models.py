@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
 from datetime import datetime
+from django.utils.crypto import get_random_string
+from uuid import uuid4
 
 # Modelo Pessoa
 class Pessoa(models.Model):
@@ -82,7 +84,7 @@ class Disciplina(models.Model):
     carga_horaria = models.IntegerField("Carga Horária", null=False)
     professor = models.ManyToManyField(Professor)
     periodo = models.IntegerField("Período", null=False, blank=False)
-    aluno = models.ManyToManyField(Aluno,through="AlunoDisciplina")
+    aluno = models.ManyToManyField(Aluno)
     curso = models.ManyToManyField(Curso)
 
     def __str__(self):
@@ -105,7 +107,7 @@ class TipoRequerimento(models.Model):
         return self.nome
 
     class Meta:
-        permissions = (
+        permissions = (("add_tipo_requerimento", "Can Add tipo requerimento"),
         ("view_tipo_requerimento", "Can see tipo requerimento"),("detail_tipo_requerimento", "Can see detail of the tipo requerimento"))
 
 # Modelo Documento
@@ -126,11 +128,12 @@ def aluno_directory_path(instance, filename):
     return 'func_{0}/{1}'.format(instance.aluno.username, filename)
 
 class Requerimento(models.Model):
+    codigo = models.CharField(max_length=40, unique=True,default=uuid4)
     aluno = models.ForeignKey(Aluno, on_delete=models.PROTECT, related_name="Aluno", null=False)
     data_solicitacao_requerimento = models.DateField("Data da solicitação", null=True, blank=True, auto_now_add=True, editable=False)
     tipo_requerimento = models.ForeignKey(TipoRequerimento, on_delete=models.PROTECT, verbose_name="Tipo de Requerimento", null=False)
     disciplina = models.ForeignKey(AlunoDisciplina,on_delete=models.PROTECT, related_name="Disciplina", null=True, blank=True)
-    observacoes = models.TextField("Observações", blank=True, null=True)
+    observacoes = models.TextField("Observações", blank=True, null=True, default=" ")
     justificativa = models.TextField("Justificativa", blank=True, null=True)
     data_atividade = models.DateField("Data da atividade", null=True, blank=True)
     tipo_atividade = models.CharField("Tipo de atividade", max_length=50, null=True, blank=True)

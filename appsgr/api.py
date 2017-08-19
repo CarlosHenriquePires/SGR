@@ -41,13 +41,13 @@ class AlunoResource(ModelResource):
         queryset = Aluno.objects.all()
         resource_name = 'aluno'
 
-class AlunoDisciplinaResource(ModelResource):
-    aluno = fields.ForeignKey('appssgr.api.AlunoResource','aluno',full=True)
-    disciplina = fields.ForeignKey('appssgr.api.DisciplinaResource', 'disciplina',full=True)
-    class Meta:
-        queryset = AlunoDisciplina.objects.all()
-        always_return_data = True
-        resource_name = 'alunodisciplina'
+#class AlunoDisciplinaResource(ModelResource):
+#    aluno = fields.ForeignKey('appssgr.api.AlunoResource','aluno',full=True)
+#    disciplina = fields.ForeignKey('appssgr.api.DisciplinaResource', 'disciplina',full=True)
+#    class Meta:
+#        queryset = AlunoDisciplina.objects.all()
+#        always_return_data = True
+#        resource_name = 'alunodisciplina'
 
 class TipoRequerimentoResource(ModelResource):
     class Meta:

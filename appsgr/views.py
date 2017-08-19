@@ -48,7 +48,7 @@ def erro_permissao(request):
 
 @login_required(login_url='login')
 def ok(request):
-    return render(request,'req/ok.html')
+    return render(request, 'req/ok.html')
 
 @login_required(login_url='login')
 @permission_required('appsgr.add_requerimento',login_url='erro_permissao')
@@ -76,7 +76,7 @@ def req_new(request):
 
             send_mail('Novo Requerimento Solicitado!', email, 'notificacao.sgr@gmail.com',
                       ['carluxhenrique@gmail.com'], fail_silently=False)
-            return render(request,'req/ok.html')
+            return render(request, 'req/ok.html')
     else:
         form=RequerimentoFormNovo()
     dados={'form':form}
@@ -179,8 +179,9 @@ def req_list_avaliacao(request):
 
         if (criterio_prof):
             requerimento = Requerimento.objects.filter(situacao=1,encaminhado_para=pessoa_logada,
-                                                       professor_atividade__pessoa__nome__contains=criterio_prof) | Requerimento.objects.all().filter(professor_atividade__pessoa__nome__contains=professor.pessoa.nome,situacao=1).order_by\
-                               ('data_solicitacao_requerimento','aluno__pessoa__nome')
+                                                       professor_atividade__pessoa__nome__contains=criterio_prof)
+                           #| Requerimento.objects.all().filter(professor_atividade__pessoa__nome__contains=professor.pessoa.nome,situacao=1).order_by\
+                            #   ('data_solicitacao_requerimento','aluno__pessoa__nome')
         if (criterio_disciplina):
             requerimento = Requerimento.objects.filter(encaminhado_para=pessoa_logada,situacao=1,
                                                        disciplina__disciplina__nome__contains=criterio_disciplina).order_by(
@@ -188,12 +189,13 @@ def req_list_avaliacao(request):
 
         if (criterio_prof or criterio or criterio_disciplina ):
             requerimento = Requerimento.objects.filter(encaminhado_para=pessoa_logada,situacao=1, professor_atividade__pessoa__nome__contains=criterio_prof
-            ,aluno__pessoa__nome__contains=criterio,disciplina__disciplina__nome__contains=criterio_disciplina) | Requerimento.objects.all().filter(professor_atividade__pessoa__nome__contains=professor.pessoa.nome,situacao=1).order_by\
-                               ('data_solicitacao_requerimento','aluno__pessoa__nome')
+            ,aluno__pessoa__nome__contains=criterio,disciplina__disciplina__nome__contains=criterio_disciplina)
+                           #| Requerimento.objects.all().filter(professor_atividade__pessoa__nome__contains=professor.pessoa.nome,situacao=1).order_by\
+                            #   ('data_solicitacao_requerimento','aluno__pessoa__nome')
 
         else:
             requerimento = Requerimento.objects.all().filter(encaminhado_para=pessoa_logada,situacao=1) | Requerimento.objects.all().filter\
-                (professor_atividade=pessoa_logada,situacao=1).order_by(
+                (encaminhado_para=pessoa_logada,professor_atividade=pessoa_logada,situacao=1).order_by(
                 'data_solicitacao_requerimento','aluno__pessoa__nome')
             criterio = ""
         # Cria o mecanimos de paginação
@@ -335,7 +337,7 @@ def req_update(request,pk):
                 send_mail('Requerimento Encaminhado ao Coordenador!', email, 'notificacao.sgr@gmail.com',
                           ['carluxhenrique@gmail.com'], fail_silently=False)
 
-            return redirect('home')
+            return render(request, 'req/ok.html')
 
     else:
         form=RequerimentoForm(instance=requerimento)
@@ -421,9 +423,10 @@ def req_list_deferidos(request):
 
         if (criterio_prof):
             requerimento = Requerimento.objects.filter(situacao=2, encaminhado_para=pessoa_logada,
-                                                           professor_atividade__pessoa__nome__contains=criterio_prof) | Requerimento.objects.all().filter(
-                    professor_atividade__pessoa__nome__contains=professor.pessoa.nome, situacao=2).order_by \
-                                   ('data_solicitacao_requerimento', 'aluno__pessoa__nome')
+                                                           professor_atividade__pessoa__nome__contains=criterio_prof)
+                           #| Requerimento.objects.all().filter(
+                    #professor_atividade__pessoa__nome__contains=professor.pessoa.nome, situacao=2).order_by \
+                     #              ('data_solicitacao_requerimento', 'aluno__pessoa__nome')
         if (criterio_disciplina):
             requerimento = Requerimento.objects.filter(encaminhado_para=pessoa_logada, situacao=2,
                                                            disciplina__disciplina__nome__contains=criterio_disciplina).order_by(
@@ -433,9 +436,10 @@ def req_list_deferidos(request):
             requerimento = Requerimento.objects.filter(encaminhado_para=pessoa_logada, situacao=2,
                                                            professor_atividade__pessoa__nome__contains=criterio_prof
                                                            , aluno__pessoa__nome__contains=criterio,
-                                                           disciplina__disciplina__nome__contains=criterio_disciplina) | Requerimento.objects.all().filter(
-                    professor_atividade__pessoa__nome__contains=professor.pessoa.nome, situacao=2).order_by \
-                                   ('data_solicitacao_requerimento', 'aluno__pessoa__nome')
+                                                           disciplina__disciplina__nome__contains=criterio_disciplina)\
+                           #| Requerimento.objects.all().filter(
+                    #professor_atividade__pessoa__nome__contains=professor.pessoa.nome, situacao=2).order_by \
+                     #              ('data_solicitacao_requerimento', 'aluno__pessoa__nome')
 
         else:
             requerimento = Requerimento.objects.all().filter(encaminhado_para=pessoa_logada,
@@ -567,9 +571,10 @@ def req_list_indeferidos(request):
 
         if (criterio_prof):
             requerimento = Requerimento.objects.filter(situacao=3, encaminhado_para=pessoa_logada,
-                                                       professor_atividade__pessoa__nome__contains=criterio_prof) | Requerimento.objects.all().filter(
-                professor_atividade__pessoa__nome__contains=professor.pessoa.nome, situacao=3).order_by \
-                               ('data_solicitacao_requerimento', 'aluno__pessoa__nome')
+                                                       professor_atividade__pessoa__nome__contains=criterio_prof)\
+                           #| Requerimento.objects.all().filter(
+                #professor_atividade__pessoa__nome__contains=professor.pessoa.nome, situacao=3).order_by \
+                 #              ('data_solicitacao_requerimento', 'aluno__pessoa__nome')
         if (criterio_disciplina):
             requerimento = Requerimento.objects.filter(encaminhado_para=pessoa_logada, situacao=3,
                                                        disciplina__disciplina__nome__contains=criterio_disciplina).order_by(
@@ -579,9 +584,10 @@ def req_list_indeferidos(request):
             requerimento = Requerimento.objects.filter(encaminhado_para=pessoa_logada, situacao=3,
                                                        professor_atividade__pessoa__nome__contains=criterio_prof
                                                        , aluno__pessoa__nome__contains=criterio,
-                                                       disciplina__disciplina__nome__contains=criterio_disciplina) | Requerimento.objects.all().filter(
-                professor_atividade__pessoa__nome__contains=professor.pessoa.nome, situacao=3).order_by \
-                               ('data_solicitacao_requerimento', 'aluno__pessoa__nome')
+                                                       disciplina__disciplina__nome__contains=criterio_disciplina) \
+                           #| Requerimento.objects.all().filter(
+                #professor_atividade__pessoa__nome__contains=professor.pessoa.nome, situacao=3).order_by \
+                 #              ('data_solicitacao_requerimento', 'aluno__pessoa__nome')
 
         else:
             requerimento = Requerimento.objects.all().filter(encaminhado_para=pessoa_logada,
@@ -677,3 +683,64 @@ def req_list_indeferidos(request):
                  "tipo_requerimento": tipo_requerimento, "professores": professores, "disciplinas": disciplinas,
                  'requerimentos_professor': requerimentos_professor}
         return render(request, 'req/req_list_indeferidos.html', dados)
+
+@login_required(login_url='login')
+@permission_required('appsgr.add_tipo_requerimento',login_url='erro_permissao')
+def req_autenticado(request):
+    criterio = request.GET.get('criterio')
+    pessoa_logada = User.objects.get(username=request.user.username)
+    tipo_requerimento = TipoRequerimento.objects.all().order_by('nome')
+    professores = Professor.objects.all().order_by('pessoa__nome')
+    disciplinas = Disciplina.objects.all().order_by('nome')
+    requerimentos_professor = []
+
+    # Instanciando objetos
+    try:
+        coordenador = Coordenador.objects.get(username=pessoa_logada.username)
+    except Coordenador.DoesNotExist:
+        coordenador = None
+    try:
+        professor = Professor.objects.get(username=pessoa_logada.username)
+    except Professor.DoesNotExist:
+        professor = None
+    try:
+        tecadm = Tecnico_Administrativo.objects.get(username=pessoa_logada.username)
+    except Tecnico_Administrativo.DoesNotExist:
+        tecadm = None
+
+
+    # COORDENADOR
+    if (coordenador != None):
+        if (criterio):
+            requerimento = Requerimento.objects.all().filter(codigo=criterio)
+        else:
+            requerimento = ""
+            criterio = ""
+        dados = {'requerimento': requerimento, 'criterio': criterio,
+                 "tipo_requerimento": tipo_requerimento, "professores": professores, "disciplinas": disciplinas,
+                 'requerimentos_professor': requerimentos_professor}
+        return render(request, 'req/req_autenticado.html', dados)
+
+    # PROFESSOR
+    if (professor != None):
+        if (criterio):
+            requerimento = Requerimento.objects.all().filter(codigo=criterio)
+        else:
+            requerimento = ""
+            criterio = ""
+        dados = {'requerimento': requerimento, 'criterio': criterio,
+                 "tipo_requerimento": tipo_requerimento, "professores": professores, "disciplinas": disciplinas,
+                 'requerimentos_professor': requerimentos_professor}
+        return render(request, 'req/req_autenticado.html', dados)
+
+    # TEC ADM
+    if (tecadm != None):
+        if (criterio):
+            requerimento = Requerimento.objects.all().filter(codigo=criterio)
+        else:
+            requerimento = ""
+            criterio = ""
+        dados = {'requerimento': requerimento, 'criterio': criterio,
+                 "tipo_requerimento": tipo_requerimento, "professores": professores, "disciplinas": disciplinas,
+                 'requerimentos_professor': requerimentos_professor}
+        return render(request, 'req/req_autenticado.html', dados)

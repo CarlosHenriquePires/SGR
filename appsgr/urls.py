@@ -16,7 +16,7 @@ alunoResource=AlunoResource()
 tecAdmResource=TecAdmResource()
 cursoResource=CursoResource()
 disciplinaResource=DisciplinaResource()
-alunodisciplinaResource=AlunoDisciplinaResource()
+#alunodisciplinaResource=AlunoDisciplinaResource()
 tipoRequerimentoResource = TipoRequerimentoResource()
 situacaoResource = SituacaoResource()
 requerimentoResource = RequerimentoResource()
@@ -27,7 +27,7 @@ api.register(alunoResource)
 api.register(tecAdmResource)
 api.register(cursoResource)
 api.register(disciplinaResource)
-api.register(alunodisciplinaResource)
+#api.register(alunodisciplinaResource)
 api.register(tipoRequerimentoResource)
 api.register(situacaoResource)
 api.register(requerimentoResource)
@@ -49,6 +49,7 @@ urlpatterns=[
     url(r'^req/list/$',req_list,name='req_list'),
     url(r'^req/list/deferidos$',req_list_deferidos,name='req_list_deferidos'),
     url(r'^req/list/indeferidos$', req_list_indeferidos, name='req_list_indeferidos'),
+    url(r'^req/autenticado$', req_autenticado, name='req_autenticado'),
     url(r'^req/list/avaliacao$', req_list_avaliacao, name='req_list_avaliacao'),
     url(r'^req/new/$',req_new,name='req_new'),
     url(r'^req/update/(?P<pk>\d+)$',req_update,name='req_update'),

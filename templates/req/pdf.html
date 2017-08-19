@@ -27,7 +27,13 @@
             margin-bottom: 80px;
 
         }
-
+    footer {
+    position:absolute;
+    bottom:0;
+    width:100%;
+    height:60px;   /* Mesma Altura do Rodapé */
+    background:#6cf;
+            }
 </style>
     <head>
         <meta charset="UTF-8">
@@ -47,6 +53,12 @@
         </h3></p>
 
         <h3 align="right">Parnamirim(RN), {{ requerimento.data_atual}}.</h3>
-
     </body>
+        <footer> <!-- Aqui e a area do footer -->
+	        <div class="container">
+		        <div class="rodape">
+                    <h6 align="center">Código de Validação: {{ requerimento.codigo }}</h6>
+		        </div>
+	        </div>
+    </footer>
 </html>
