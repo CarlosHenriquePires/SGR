@@ -4,21 +4,23 @@
     {% load bootstrap %}
      <h3 style="margin: 30px">
              Editar Requerimento </h3>
+        <div class="col-md-8">
              <form method="POST" role="form" class="form-group" enctype="multipart/form-data">
             {% csrf_token %}
 
             {% for field in form %}
                 {{ field.errors }}
                 <div align="center" >
-                    <p><h3><span class="label label-default" ></span></h3></p>
+                    <h3><span class="label label-default" ></span></h3>
                 </div>
             {% endfor %}
-                </p>
+                <p>
                 {{ form|bootstrap_horizontal:'col-lg-4' }}
-                <p/>
-                <div align="center">
+                </p>
+                <div class="col-md-offset-4" align="center">
                     <input type="submit" class="btn btn-success btn-lg" value="Salvar">
                 </div>
-        </form>
+            </form>
+        </div>
 
 {% endblock %}

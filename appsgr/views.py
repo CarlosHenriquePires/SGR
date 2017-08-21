@@ -314,7 +314,7 @@ def req_detail(request, pk):
 def req_update(request,pk):
     requerimento=Requerimento.objects.get(id=pk)
     if (request.method=="POST"):
-        form=RequerimentoForm(request.POST,request.FILES,instance=requerimento)
+        form=RequerimentoFormUpdate(request.POST,request.FILES,instance=requerimento)
         if (form.is_valid()):
             form.save()
             situacao = "Em Avaliação"
@@ -340,7 +340,7 @@ def req_update(request,pk):
             return render(request, 'req/ok.html')
 
     else:
-        form=RequerimentoForm(instance=requerimento)
+        form=RequerimentoFormUpdate(instance=requerimento)
         dados={'form':form}
         return render(request, 'req/req_form_update.html', dados)
 

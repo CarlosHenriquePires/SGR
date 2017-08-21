@@ -19,18 +19,12 @@ class Pessoa(models.Model):
 
 # Modelo Professor
 class Professor(User):
-    pessoa = models.ForeignKey(Pessoa,on_delete=models.PROTECT, verbose_name="Professor",
+    pessoa = models.ForeignKey(Pessoa,on_delete=models.PROTECT, verbose_name="Professor:",
                                null=False, blank=False)
 
     def __str__(self):
         return self.pessoa.nome + " " + self.pessoa.sobrenome
 
-    def get_full_name(self):
-        """
-        Returns the first_name plus the last_name, with a space in between.
-        """
-        full_name = '%s %s' % (self.pessoa.nome, self.pessoa.sobrenome)
-        return full_name.strip()
 
 # Modelo Coordenador
 class Coordenador(Professor):
@@ -45,13 +39,6 @@ class Tecnico_Administrativo(User):
 
     def __str__(self):
         return self.pessoa.nome + " " + self.pessoa.sobrenome
-
-    def get_full_name(self):
-        """
-        Returns the first_name plus the last_name, with a space in between.
-        """
-        full_name = '%s %s' % (self.pessoa.nome, self.pessoa.sobrenome)
-        return full_name.strip()
 
 # Modelo Curso
 class Curso(models.Model):
@@ -69,13 +56,6 @@ class Aluno(User):
 
     def __str__(self):
         return self.pessoa.nome+" " + self.pessoa.sobrenome
-
-    def get_full_name(self):
-        """
-        Returns the first_name plus the last_name, with a space in between.
-        """
-        full_name = '%s %s' % (self.pessoa.nome, self.pessoa.sobrenome)
-        return full_name.strip()
 
 # Modelo Disciplina
 class Disciplina(models.Model):
@@ -128,20 +108,25 @@ def aluno_directory_path(instance, filename):
     return 'func_{0}/{1}'.format(instance.aluno.username, filename)
 
 class Requerimento(models.Model):
-    codigo = models.CharField(max_length=40, unique=True,default=uuid4)
+    codigo = models.CharField(max_length=40, unique=True, default=uuid4)
     aluno = models.ForeignKey(Aluno, on_delete=models.PROTECT, related_name="Aluno", null=False)
-    data_solicitacao_requerimento = models.DateField("Data da solicitação", null=True, blank=True, auto_now_add=True, editable=False)
-    tipo_requerimento = models.ForeignKey(TipoRequerimento, on_delete=models.PROTECT, verbose_name="Tipo de Requerimento", null=False)
-    disciplina = models.ForeignKey(AlunoDisciplina,on_delete=models.PROTECT, related_name="Disciplina", null=True, blank=True)
+    data_solicitacao_requerimento = models.DateField("Data da solicitação", null=True, blank=True, auto_now_add=True,
+                                                     editable=False)
+    tipo_requerimento = models.ForeignKey(TipoRequerimento, on_delete=models.PROTECT,
+                                          verbose_name="Tipo de Requerimento", null=False)
+    disciplina = models.ForeignKey(AlunoDisciplina, on_delete=models.PROTECT, related_name="Disciplina", null=True,
+                                   blank=True)
     observacoes = models.TextField("Observações", blank=True, null=True, default=" ")
     justificativa = models.TextField("Justificativa", blank=True, null=True)
     data_atividade = models.DateField("Data da atividade", null=True, blank=True)
     tipo_atividade = models.CharField("Tipo de atividade", max_length=50, null=True, blank=True)
-    professor_atividade = models.ForeignKey(Professor, on_delete=models.PROTECT, related_name="Professor_Atividade", null=True, blank=True)
-    documentos_apresentados = models.ManyToManyField(Documento, blank=True)
-    documentos_files = models.FileField(upload_to=aluno_directory_path,default=None, null=True)
-    encaminhado_para = models.ForeignKey(Coordenador, on_delete=models.PROTECT, related_name="Avaliador", null=True, blank=True)
-    situacao = models.ForeignKey(Situacao, max_length=50, blank=True, null=True,default=1)
+    professor_atividade = models.ForeignKey(Professor, on_delete=models.PROTECT, related_name="Professor_Atividade",
+                                            null=True, blank=True)
+    documentos_apresentados = models.ForeignKey(Documento, blank=True)
+    documentos_files = models.FileField(upload_to=aluno_directory_path, default=None, null=True)
+    encaminhado_para = models.ForeignKey(Coordenador, on_delete=models.PROTECT, related_name="Avaliador", null=True,
+                                         blank=True)
+    situacao = models.ForeignKey(Situacao, max_length=50, blank=True, null=True, default=1)
     data_atual = datetime.now().date()
 
     class Meta:

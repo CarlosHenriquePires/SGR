@@ -53,30 +53,30 @@ tecadm.save()
 
 
 #Professores
-prof1=Professor(pessoa=pes1,username='20122148000001')
+prof1=Professor(pessoa=pes1,username='20122148000001',first_name='Givanaldo',last_name='Rocha')
 prof1.set_password('123456')
 prof1.save()
 professores.user_set.add(prof1)
 coordenadores.user_set.add(prof1)
 
 
-prof2=Professor(pessoa=pes2,username='20122148000002')
+prof2=Professor(pessoa=pes2,username='20122148000002',first_name='Bruno',last_name='Gomes')
 prof2.set_password('123456')
 prof2.save()
 professores.user_set.add(prof2)
 coordenadores.user_set.add(prof2)
 
-prof3=Professor(pessoa=pes3,username='20122148000003')
+prof3=Professor(pessoa=pes3,username='20122148000003',first_name='Demostenes',last_name='Sena')
 prof3.set_password('123456')
 prof3.save()
 professores.user_set.add(prof3)
 
-prof4=Professor(pessoa=pes4,username='20122148000004')
+prof4=Professor(pessoa=pes4,username='20122148000004',first_name='Marcelo',last_name='Varela')
 prof4.set_password('123456')
 prof4.save()
 professores.user_set.add(prof4)
 
-prof5=Professor(pessoa=pes5,username='20122148000005')
+prof5=Professor(pessoa=pes5,username='20122148000005',first_name='Fabio',last_name='Procópio')
 prof5.set_password('123456')
 prof5.save()
 professores.user_set.add(prof5)
@@ -84,7 +84,7 @@ professores.user_set.add(prof5)
 # Coordenadores
 
 #Tec Admin
-tecadm1=Tecnico_Administrativo(pessoa=pes6,username='20122148000006')
+tecadm1=Tecnico_Administrativo(pessoa=pes6,username='20122148000006',first_name='Eduardo',last_name='Chavez')
 tecadm1.set_password('123456')
 tecadm1.save()
 tecadm.user_set.add(tecadm1)
@@ -106,50 +106,39 @@ tsi.save()
 
 # Criando os Alunos
 
-alu1=Aluno(pessoa=pes7,curso=tsi,username='20122148000007')
+alu1=Aluno(pessoa=pes7,curso=tsi,username='20122148000007',first_name='Carlos Henrique',last_name='Pires dos Santos')
 alu1.set_password('123456')
 alu1.save()
 alunos.user_set.add(alu1)
 
-alu2=Aluno(pessoa=pes8,curso=tsi,username='20122148000008')
+alu2=Aluno(pessoa=pes8,curso=tsi,username='20122148000008',first_name='Matheus Barbosa',last_name='de Farias')
 alu2.set_password('123456')
 alu2.save()
 alunos.user_set.add(alu2)
 
-alu3=Aluno(pessoa=pes9,curso=tsi,username='20122148000009')
+alu3=Aluno(pessoa=pes9,curso=tsi,username='20122148000009',first_name='Juliana',last_name='Soares')
 alu3.set_password('123456')
 alu3.save()
 alunos.user_set.add(alu3)
 
-alu4=Aluno(pessoa=pes10,curso=tsi,username='20122148000010')
+alu4=Aluno(pessoa=pes10,curso=tsi,username='20122148000010',first_name='Luan',last_name='Medeiros')
 alu4.set_password('123456')
 alu4.save()
 alunos.user_set.add(alu4)
 
 # Alunos se matriculando nas Disciplinas
-aludisc = AlunoDisciplina(aluno=alu1,disciplina=web1,matriculado=True)
-aludisc.save()
+aludisc1 = AlunoDisciplina(aluno=alu1,disciplina=web1,matriculado=True)
+aludisc1.save()
 
-aludisc2 = AlunoDisciplina(aluno=alu1,disciplina=bd1,matriculado=True)
+aludisc2 = AlunoDisciplina(aluno=alu2,disciplina=estd,matriculado=True)
 aludisc2.save()
 
-aludisc3 = AlunoDisciplina(aluno=alu2,disciplina=estd,matriculado=True)
+aludisc3 = AlunoDisciplina(aluno=alu3,disciplina=algo,matriculado=True)
 aludisc3.save()
 
-aludisc4 = AlunoDisciplina(aluno=alu2,disciplina=algo,matriculado=True)
+aludisc4 = AlunoDisciplina(aluno=alu4,disciplina=bd1,matriculado=True)
 aludisc4.save()
 
-aludisc5 = AlunoDisciplina(aluno=alu3,disciplina=bd1,matriculado=True)
-aludisc5.save()
-
-aludisc6 = AlunoDisciplina(aluno=alu3,disciplina=algo,matriculado=True)
-aludisc6.save()
-
-aludisc7 = AlunoDisciplina(aluno=alu4,disciplina=web1,matriculado=True)
-aludisc7.save()
-
-aludisc8 = AlunoDisciplina(aluno=alu4,disciplina=estd,matriculado=True)
-aludisc8.save()
 
 # Tipo Requerimento
 tipo1 = TipoRequerimento(nome="Reposição de Atividades")
