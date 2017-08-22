@@ -333,8 +333,13 @@ def req_update(request,pk):
                         'Favor checar o sistema para mais informações.'.format(
                     requerimento.aluno.pessoa.nome, requerimento.aluno.pessoa.sobrenome, requerimento.aluno.username,
                     requerimento.aluno.curso.nome, requerimento.disciplina, requerimento.encaminhado_para.first_name,requerimento.encaminhado_para.last_name)
-
+                email2 = 'Atenção! O Técnico Administrativo acabou de lhe encaminhar o requerimento solicitado pelo aluno {} {}, de matrícula {}, ' \
+                    'do curso {} para a disciplina {}. Favor checar o sistema. '.format\
+                (requerimento.aluno.pessoa.nome,requerimento.aluno.pessoa.sobrenome,
+                 requerimento.aluno.username,requerimento.aluno.curso.nome,requerimento.disciplina)
                 send_mail('Requerimento Encaminhado ao Coordenador!', email, 'notificacao.sgr@gmail.com',
+                          ['carluxhenrique@gmail.com'], fail_silently=False)
+                send_mail('Requerimento Encaminhado ao Coordenador!', email2, 'notificacao.sgr@gmail.com',
                           ['carluxhenrique@gmail.com'], fail_silently=False)
 
             return render(request, 'req/ok.html')

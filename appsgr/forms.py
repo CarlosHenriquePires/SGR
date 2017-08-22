@@ -2,6 +2,10 @@ from django.forms import ModelForm,forms
 from appsgr.models import *
 
 class RequerimentoForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(RequerimentoForm, self).__init__(*args, **kwargs)
+        self.fields['justificativa'].widget.attrs['required'] = True
+
     class Meta:
         model=Requerimento
         fields=('__all__')

@@ -110,22 +110,17 @@ def aluno_directory_path(instance, filename):
 class Requerimento(models.Model):
     codigo = models.CharField(max_length=40, unique=True, default=uuid4)
     aluno = models.ForeignKey(Aluno, on_delete=models.PROTECT, related_name="Aluno", null=False)
-    data_solicitacao_requerimento = models.DateField("Data da solicitação", null=True, blank=True, auto_now_add=True,
-                                                     editable=False)
-    tipo_requerimento = models.ForeignKey(TipoRequerimento, on_delete=models.PROTECT,
-                                          verbose_name="Tipo de Requerimento", null=False)
-    disciplina = models.ForeignKey(AlunoDisciplina, on_delete=models.PROTECT, related_name="Disciplina", null=True,
-                                   blank=True)
+    data_solicitacao_requerimento = models.DateField("Data da solicitação", null=True, blank=True, auto_now_add=True,editable=False)
+    tipo_requerimento = models.ForeignKey(TipoRequerimento, on_delete=models.PROTECT,verbose_name="Tipo de Requerimento", null=False)
+    disciplina = models.ForeignKey(AlunoDisciplina, on_delete=models.PROTECT, related_name="Disciplina", null=False,blank=False)
     observacoes = models.TextField("Observações", blank=True, null=True, default=" ")
-    justificativa = models.TextField("Justificativa", blank=True, null=True)
-    data_atividade = models.DateField("Data da atividade", null=True, blank=True)
-    tipo_atividade = models.CharField("Tipo de atividade", max_length=50, null=True, blank=True)
-    professor_atividade = models.ForeignKey(Professor, on_delete=models.PROTECT, related_name="Professor_Atividade",
-                                            null=True, blank=True)
-    documentos_apresentados = models.ForeignKey(Documento, blank=True)
+    justificativa = models.TextField("Justificativa", blank=False, null=False)
+    data_atividade = models.DateField("Data da atividade", null=False, blank=False)
+    tipo_atividade = models.CharField("Tipo de atividade", max_length=50, null=False, blank=False)
+    professor_atividade = models.ForeignKey(Professor, on_delete=models.PROTECT, related_name="Professor_Atividade",null=False, blank=False)
+    documentos_apresentados = models.ForeignKey(Documento, blank=False,null=False)
     documentos_files = models.FileField(upload_to=aluno_directory_path, default=None, null=True)
-    encaminhado_para = models.ForeignKey(Coordenador, on_delete=models.PROTECT, related_name="Avaliador", null=True,
-                                         blank=True)
+    encaminhado_para = models.ForeignKey(Coordenador, on_delete=models.PROTECT, related_name="Avaliador", null=True,blank=True)
     situacao = models.ForeignKey(Situacao, max_length=50, blank=True, null=True, default=1)
     data_atual = datetime.now().date()
 
